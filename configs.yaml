@@ -1,0 +1,136 @@
+defaults:
+
+  logdir: null
+  traindir: null
+  evaldir: null
+  offline_traindir: ''
+  offline_evaldir: ''
+  seed: 0
+  steps: 5e5
+  eval_every: 1e4
+  log_every: 1e4
+  reset_every: 0
+  #gpu_growth: True
+  device: 'cuda:0'
+  precision: 16
+  debug: False
+  expl_gifs: False
+
+  # Environment
+  task: 'dmc_walker_walk'
+  size: [64, 64]
+  envs: 1
+  action_repeat: 2
+  time_limit: 1000
+  grayscale: False
+  prefill: 2500
+  eval_noise: 0.0
+  reward_trans: 'symlog'
+  obs_trans: 'normalize'
+  critic_trans: 'symlog'
+  reward_EMA: True
+
+  # Model
+  dyn_cell: 'gru_layer_norm'
+  dyn_hidden: 512
+  dyn_deter: 512
+  dyn_stoch: 32
+  dyn_discrete: 32
+  dyn_input_layers: 1
+  dyn_output_layers: 1
+  dyn_rec_depth: 1
+  dyn_shared: False
+  dyn_mean_act: 'none'
+  dyn_std_act: 'sigmoid2'
+  dyn_min_std: 0.1
+  dyn_temp_post: True
+  grad_heads: ['image', 'reward', 'discount']
+  units: 256
+  reward_layers: 2
+  discount_layers: 2
+  value_layers: 2
+  actor_layers: 2
+  act: 'SiLU'
+  norm: 'LayerNorm'
+  cnn_depth: 32
+  encoder_kernels: [3, 3, 3, 3]
+  decoder_kernels: [3, 3, 3, 3]
+  # changed here
+  value_head: 'twohot'
+  reward_head: 'twohot'
+  kl_lscale: '0.1'
+  kl_rscale: '0.5'
+  kl_free: '1.0'
+  kl_forward: False
+  pred_discount: True
+  discount_scale: 1.0
+  reward_scale: 1.0
+  weight_decay: 0.0
+  unimix_ratio: 0.01
+
+  # Training
+  batch_size: 16
+  batch_length: 64
+  train_every: 5
+  train_steps: 1
+  pretrain: 100
+  model_lr: 1e-4
+  opt_eps: 1e-8
+  grad_clip: 1000
+  value_lr: 3e-5
+  actor_lr: 3e-5
+  ac_opt_eps: 1e-5
+  value_grad_clip: 100
+  actor_grad_clip: 100
+  dataset_size: 0
+  oversample_ends: False
+  slow_value_target: True
+  slow_actor_target: True
+  slow_target_update: 50
+  slow_target_fraction: 0.01
+  opt: 'adam'
+
+  # Behavior.
+  discount: 0.997
+  discount_lambda: 0.95
+  imag_horizon: 15
+  imag_gradient: 'dynamics'
+  imag_gradient_mix: '0.1'
+  imag_sample: True
+  actor_dist: 'trunc_normal'
+  actor_entropy: '3e-4'
+  actor_state_entropy: 0.0
+  actor_init_std: 1.0
+  actor_min_std: 0.1
+  actor_disc: 5
+  actor_temp: 0.1
+  actor_outscale: 0.0
+  expl_amount: 0.0
+  eval_state_mean: False
+  collect_dyn_sample: True
+  behavior_stop_grad: True
+  value_decay: 0.0
+  future_entropy: False
+
+  # Exploration
+  expl_behavior: 'greedy'
+  expl_until: 0
+  expl_extr_scale: 0.0
+  expl_intr_scale: 1.0
+  disag_target: 'stoch'
+  disag_log: True
+  disag_models: 10
+  disag_offset: 1
+  disag_layers: 4
+  disag_units: 400
+  disag_action_cond: False
+
+debug:
+
+  debug: True
+  pretrain: 1
+  prefill: 1
+  train_steps: 1
+  batch_size: 10
+  batch_length: 20
+
