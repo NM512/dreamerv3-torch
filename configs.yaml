@@ -6,7 +6,7 @@ defaults:
   offline_traindir: ''
   offline_evaldir: ''
   seed: 0
-  steps: 5e5
+  steps: 1e6
   eval_every: 1e4
   log_every: 1e4
   reset_every: 0
@@ -36,8 +36,8 @@ defaults:
   dyn_deter: 512
   dyn_stoch: 32
   dyn_discrete: 32
-  dyn_input_layers: 1
-  dyn_output_layers: 1
+  dyn_input_layers: 2
+  dyn_output_layers: 2
   dyn_rec_depth: 1
   dyn_shared: False
   dyn_mean_act: 'none'
@@ -45,7 +45,7 @@ defaults:
   dyn_min_std: 0.1
   dyn_temp_post: True
   grad_heads: ['image', 'reward', 'discount']
-  units: 256
+  units: 512
   reward_layers: 2
   discount_layers: 2
   value_layers: 2
@@ -86,7 +86,7 @@ defaults:
   oversample_ends: False
   slow_value_target: True
   slow_actor_target: True
-  slow_target_update: 50
+  slow_target_update: 100
   slow_target_fraction: 0.01
   opt: 'adam'
 

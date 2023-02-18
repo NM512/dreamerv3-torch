@@ -60,6 +60,7 @@ class RSSM(nn.Module):
             inp_dim += self._embed
         for i in range(self._layers_input):
             inp_layers.append(nn.Linear(inp_dim, self._hidden))
+            inp_layers.append(self._norm(self._hidden))
             inp_layers.append(self._act())
             if i == 0:
                 inp_dim = self._hidden
