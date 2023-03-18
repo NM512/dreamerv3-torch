@@ -1,9 +1,10 @@
 # dreamerv3-torch
 Pytorch implementation of [Mastering Diverse Domains through World Models](https://arxiv.org/abs/2301.04104v1).\
 Validation is in progress.
-![results](https://user-images.githubusercontent.com/70328564/219830515-263a3630-50d8-4c6e-83ad-571122b3716a.png)
+![Figure_1](https://user-images.githubusercontent.com/70328564/226098745-4f6f33f2-2cb8-495a-a5c7-4a9196859238.png)
 
 ## Instructions
+
 Get dependencies:
 ```
 pip install -r requirements.txt
@@ -18,11 +19,12 @@ tensorboard --logdir $ABSOLUTEPATH_TO_SAVE_LOG
 ```
 
 ## ToDo
-- [ ] Prototyping
-- [ ] Modify implementation details based on the author's implementation
-- [ ] Evaluate on visual DMC suite(~10 tasks)
-- [ ] Add other tasks and corresponding model sizes implementation
-- [ ] Continuous implementation improvement
+- [x] Prototyping
+- [x] Modify implementation details based on the author's implementation
+- [ ] Evaluate on visual DMC suite
+- [ ] Add state input capability and evaluate on Proprio Control Suite environment
+- [ ] Add model size options and evaluate on environments which requires that (like Minecraft)
+- [ ] etc.
 
 
 ## Acknowledgments
