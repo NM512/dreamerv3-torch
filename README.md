@@ -1,7 +1,8 @@
 # dreamerv3-torch
-Pytorch implementation of [Mastering Diverse Domains through World Models](https://arxiv.org/abs/2301.04104v1).\
-Validation is in progress.
-![Figure_1](https://user-images.githubusercontent.com/70328564/226098745-4f6f33f2-2cb8-495a-a5c7-4a9196859238.png)
+Pytorch implementation of [Mastering Diverse Domains through World Models](https://arxiv.org/abs/2301.04104v1).
+
+
+![results](https://user-images.githubusercontent.com/70328564/226332682-acaef8b5-d825-4266-b4ea-6ce4b169a3a2.png)
 
 ## Instructions
 
