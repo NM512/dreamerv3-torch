@@ -247,6 +247,7 @@ class ProcessEpisodeWrap:
                 episode_num = len(cls.eval_scores)
                 cls.eval_scores = []
                 cls.eval_lengths = []
+                cache.clear()
 
         if mode == "train" and config.dataset_size:
             total = 0
