@@ -12,6 +12,7 @@ defaults:
   log_every: 1e4
   reset_every: 0
   device: 'cuda:0'
+  compile: False
   precision: 16
   debug: False
   expl_gifs: False
@@ -63,6 +64,7 @@ defaults:
   reward_scale: 1.0
   weight_decay: 0.0
   unimix_ratio: 0.01
+  action_unimix_ratio: 0.01
 
   # Training
   batch_size: 16
@@ -119,6 +121,16 @@ defaults:
   disag_units: 400
   disag_action_cond: False
 
+visual_dmc:
+
+atari:
+  steps: 4e5
+  action_repeat: 4
+  actor_dist: 'onehot'
+  train_ratio: 1024
+  imag_gradient: 'reinforce'
+  time_limit: 108000
+
 debug:
 
   debug: True
@@ -127,15 +139,3 @@ debug:
   train_steps: 1
   batch_size: 10
   batch_length: 20
-
-cheetah:
-  task: 'dmc_cheetah_run'
-
-pendulum:
-  task: 'dmc_pendulum_swingup'
-
-cup:
-  task: 'dmc_cup_catch'
-
-acrobot:
-  task: 'dmc_acrobot_swingup'

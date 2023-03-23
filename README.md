@@ -2,7 +2,7 @@
 Pytorch implementation of [Mastering Diverse Domains through World Models](https://arxiv.org/abs/2301.04104v1).
 
 
-![results](https://user-images.githubusercontent.com/70328564/226332682-acaef8b5-d825-4266-b4ea-6ce4b169a3a2.png)
+![1](https://user-images.githubusercontent.com/70328564/227377956-4a0d7e48-22fb-4f44-aa10-e5878a5ef901.png)
 
 ## Instructions
 
@@ -10,21 +10,26 @@ Get dependencies:
 ```
 pip install -r requirements.txt
 ```
-Train the agent:
+Train the agent on Walker Walk in Vision DMC:
 ```
-python3 dreamer.py --configs defaults --logdir $ABSOLUTEPATH_TO_SAVE_LOG
+python3 dreamer.py --configs defaults --task dmc_walker_walk --logdir ~/dreamerv3-torch/logdir/dmc_walker_walk
+```
+Train the agent on Alien in Atari 100K:
+```
+python3 dreamer.py --configs defaults atari --task atari_alien --logdir ~/dreamerv3-torch/logdir/atari_alien
 ```
 Monitor results:
 ```
-tensorboard --logdir $ABSOLUTEPATH_TO_SAVE_LOG
+tensorboard --logdir ~/dreamerv3-torch/logdir
 ```
 
 ## ToDo
 - [x] Prototyping
 - [x] Modify implementation details based on the author's implementation
-- [ ] Evaluate on visual DMC suite
-- [ ] Add state input capability and evaluate on Proprio Control Suite environment
-- [ ] Add model size options and evaluate on environments which requires that (like Minecraft)
+- [x] Evaluate on DMC vision
+- [ ] Evaluate on Atari 100K
+- [ ] Add state input capability
+- [ ] Evaluate on DMC Proprio
 - [ ] etc.
 
 

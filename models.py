@@ -241,6 +241,7 @@ class ImagBehavior(nn.Module):
             config.actor_max_std,
             config.actor_temp,
             outscale=1.0,
+            unimix_ratio=config.action_unimix_ratio,
         )  # action_dist -> action_disc?
         if config.value_head == "twohot_symlog":
             self.value = networks.DenseHead(

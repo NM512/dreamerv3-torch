@@ -54,6 +54,9 @@ class Dreamer(nn.Module):
         self._task_behavior = models.ImagBehavior(
             config, self._wm, config.behavior_stop_grad
         )
+        if config.compile:
+            self._wm = torch.compile(self._wm)
+            self._task_behavior = torch.compile(self._task_behavior)
         reward = lambda f, s, a: self._wm.heads["reward"](f).mean
         self._expl_behavior = dict(
             greedy=lambda: self._task_behavior,
@@ -192,8 +195,8 @@ def make_env(config, logger, mode, train_eps, eval_eps):
             config.size,
             grayscale=config.grayscale,
             life_done=False and ("train" in mode),
-            sticky_actions=True,
-            all_actions=True,
+            sticky_actions=False,
+            all_actions=False,
         )
         env = wrappers.OneHotAction(env)
     elif suite == "dmlab":
