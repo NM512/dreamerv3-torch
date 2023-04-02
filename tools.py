@@ -548,7 +548,7 @@ class Optimizer():
                             lr=lr,
                             eps=eps),
         'nadam': lambda: NotImplemented(
-                             f'{config.opt} is not implemented'),
+                             f'{opt} is not implemented'),
         'adamax': lambda: torch.optim.Adamax(parameters,
                               lr=lr,
                               eps=eps),
