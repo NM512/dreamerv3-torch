@@ -252,14 +252,14 @@ class ProcessEpisodeWrap:
                 cls.eval_lengths = []
                 cache.clear()
 
-        if mode == "train" and config.dataset_size:
+        if mode == "train":
             total = 0
             for key, ep in reversed(sorted(cache.items(), key=lambda x: x[0])):
-                if total <= config.dataset_size - length:
+                if not config.dataset_size or total <= config.dataset_size - length:
                     total += len(ep["reward"]) - 1
                 else:
                     del cache[key]
-            logger.scalar("dataset_size", total + length)
+            logger.scalar("dataset_size", total)
         print(f"{mode.title()} episode has {length} steps and return {score:.1f}.")
         logger.scalar(f"{mode}_return", score)
         logger.scalar(f"{mode}_length", length)

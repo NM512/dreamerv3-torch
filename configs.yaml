@@ -80,7 +80,7 @@ defaults:
   ac_opt_eps: 1e-5
   value_grad_clip: 100
   actor_grad_clip: 100
-  dataset_size: 0
+  dataset_size: 1000000
   oversample_ends: False
   slow_value_target: True
   slow_target_update: 1
