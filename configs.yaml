@@ -122,16 +122,22 @@ defaults:
 
 visual_dmc:
 
-atari:
+atari100k:
   steps: 4e5
   action_repeat: 4
+  eval_episode_num: 100
+  stickey: False
+  lives: unused
+  noops: 30
+  resize: opencv
+  actions: needed
   actor_dist: 'onehot'
   train_ratio: 1024
   imag_gradient: 'reinforce'
   time_limit: 108000
+  precision: 32
 
 debug:
-
   debug: True
   pretrain: 1
   prefill: 1
