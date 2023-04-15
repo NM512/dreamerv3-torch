@@ -1,4 +1,5 @@
 import datetime
+import collections
 import io
 import json
 import pathlib
@@ -74,24 +75,26 @@ class Logger:
   def video(self, name, value):
     self._videos[name] = np.array(value)
 
-  def write(self, fps=False):
+  def write(self, fps=False, step=False):
+    if not step:
+      step = self.step
     scalars = list(self._scalars.items())
     if fps:
-      scalars.append(('fps', self._compute_fps(self.step)))
-    print(f'[{self.step}]', ' / '.join(f'{k} {v:.1f}' for k, v in scalars))
+      scalars.append(('fps', self._compute_fps(step)))
+    print(f'[{step}]', ' / '.join(f'{k} {v:.1f}' for k, v in scalars))
     with (self._logdir / 'metrics.jsonl').open('a') as f:
-      f.write(json.dumps({'step': self.step, ** dict(scalars)}) + '\n')
+      f.write(json.dumps({'step': step, ** dict(scalars)}) + '\n')
     for name, value in scalars:
-      self._writer.add_scalar('scalars/' + name, value, self.step)
+      self._writer.add_scalar('scalars/' + name, value, step)
     for name, value in self._images.items():
-      self._writer.add_image(name, value, self.step)
+      self._writer.add_image(name, value, step)
     for name, value in self._videos.items():
       name = name if isinstance(name, str) else name.decode('utf-8')
       if np.issubdtype(value.dtype, np.floating):
         value = np.clip(255 * value, 0, 255).astype(np.uint8)
       B, T, H, W, C = value.shape
       value = value.transpose(1, 4, 2, 0, 3).reshape((1, T, C, H, B*W))
-      self._writer.add_video(name, value, self.step, 16)
+      self._writer.add_video(name, value, step, 16)
 
     self._writer.flush()
     self._scalars = {}
@@ -215,7 +218,7 @@ def sample_episodes(episodes, length=None, balance=False, seed=0):
 
 def load_episodes(directory, limit=None, reverse=True):
   directory = pathlib.Path(directory).expanduser()
-  episodes = {}
+  episodes = collections.OrderedDict()
   total = 0
   if reverse:
     for filename in reversed(sorted(directory.glob('*.npz'))):
@@ -677,15 +680,13 @@ class Every:
 
   def __call__(self, step):
     if not self._every:
-      return False
+      return 0
     if self._last is None:
       self._last = step
-      return True
-    if step >= self._last + self._every:
-      self._last += self._every
-      return True
-    return False
-
+      return 1
+    count = int((step - self._last) / self._every)
+    self._last += self._every * count
+    return count
 
 class Once:
 
