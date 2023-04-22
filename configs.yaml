@@ -42,10 +42,10 @@ defaults:
   dyn_std_act: 'sigmoid2'
   dyn_min_std: 0.1
   dyn_temp_post: True
-  grad_heads: ['image', 'reward', 'discount']
+  grad_heads: ['image', 'reward', 'cont']
   units: 512
   reward_layers: 2
-  discount_layers: 2
+  cont_layers: 2
   value_layers: 2
   actor_layers: 2
   act: 'SiLU'
@@ -55,12 +55,10 @@ defaults:
   decoder_kernels: [4, 4, 4, 4]
   value_head: 'twohot_symlog'
   reward_head: 'twohot_symlog'
-  kl_lscale: '0.1'
-  kl_rscale: '0.5'
+  dyn_scale: '0.5'
+  rep_scale: '0.1'
   kl_free: '1.0'
-  kl_forward: False
-  pred_discount: True
-  discount_scale: 1.0
+  cont_scale: 1.0
   reward_scale: 1.0
   weight_decay: 0.0
   unimix_ratio: 0.01
@@ -80,7 +78,7 @@ defaults:
   value_grad_clip: 100
   actor_grad_clip: 100
   dataset_size: 1000000
-  oversample_ends: False
+  oversample_ends: True
   slow_value_target: True
   slow_target_update: 1
   slow_target_fraction: 0.02
