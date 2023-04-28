@@ -63,6 +63,7 @@ defaults:
   weight_decay: 0.0
   unimix_ratio: 0.01
   action_unimix_ratio: 0.01
+  initial: 'learned'
 
   # Training
   batch_size: 16
