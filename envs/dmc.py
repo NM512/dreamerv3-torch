@@ -44,7 +44,8 @@ class DeepMindControl:
         obs = dict(time_step.observation)
         obs["image"] = self.render()
         # There is no terminal state in DMC
-        obs["is_terminal"] = False
+        obs["is_terminal"] = False if time_step.first() else time_step.discount == 0
+        obs["is_first"] = time_step.first()
         done = time_step.last()
         info = {"discount": np.array(time_step.discount, np.float32)}
         return obs, reward, done, info
@@ -53,7 +54,8 @@ class DeepMindControl:
         time_step = self._env.reset()
         obs = dict(time_step.observation)
         obs["image"] = self.render()
-        obs["is_terminal"] = False
+        obs["is_terminal"] = False if time_step.first() else time_step.discount == 0
+        obs["is_first"] = time_step.first()
         return obs
 
     def render(self, *args, **kwargs):
