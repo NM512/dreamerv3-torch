@@ -12,7 +12,7 @@ defaults:
   log_every: 1e4
   reset_every: 0
   device: 'cuda:0'
-  compile: False
+  compile: True
   precision: 16
   debug: False
   expl_gifs: False
@@ -78,7 +78,6 @@ defaults:
   value_grad_clip: 100
   actor_grad_clip: 100
   dataset_size: 1000000
-  oversample_ends: True
   slow_value_target: True
   slow_target_update: 1
   slow_target_fraction: 0.02
