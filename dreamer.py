@@ -256,12 +256,12 @@ class ProcessEpisodeWrap:
             # use dataset_size as log step for a condition of envs > 1
             log_step = total * config.action_repeat
         elif mode == "eval":
-            # start saving episodes for evaluation
+            # keep only last item for saving memory
+            while len(cache) > 1:
+                # FIFO
+                cache.popitem()
+            # start counting scores for evaluation
             if cls.last_step_at_eval != logger.step:
-                # keep only last item
-                while len(cache) > 1:
-                    # FIFO
-                    cache.popitem()
                 cls.eval_scores = []
                 cls.eval_lengths = []
                 cls.eval_done = False
