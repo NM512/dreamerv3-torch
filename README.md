@@ -1,8 +1,5 @@
 # dreamerv3-torch
-Pytorch implementation of [Mastering Diverse Domains through World Models](https://arxiv.org/abs/2301.04104v1).
-
-
-![1](https://user-images.githubusercontent.com/70328564/227377956-4a0d7e48-22fb-4f44-aa10-e5878a5ef901.png)
+Pytorch implementation of [Mastering Diverse Domains through World Models](https://arxiv.org/abs/2301.04104v1). DreamerV3 is a scalable algorithm that outperforms previous approaches across various domains with fixed hyperparameters.
 
 ## Instructions
 
@@ -16,22 +13,26 @@ python3 dreamer.py --configs defaults --task dmc_walker_walk --logdir ~/dreamerv
 ```
 Train the agent on Alien in Atari 100K:
 ```
-python3 dreamer.py --configs defaults atari --task atari_alien --logdir ~/dreamerv3-torch/logdir/atari_alien
+python3 dreamer.py --configs defaults atari100k --task atari_alien --logdir ~/dreamerv3-torch/logdir/atari_alien
 ```
 Monitor results:
 ```
 tensorboard --logdir ~/dreamerv3-torch/logdir
 ```
 
+## Evaluation Results
+More results will be added in the future.
+
+![dmc_vision](https://user-images.githubusercontent.com/70328564/236276650-ae706f29-4c14-4ed3-9b61-1829a1fdedae.png)
+![atari100k](https://user-images.githubusercontent.com/70328564/236276669-16a56be3-40d6-49fd-befa-97c72b7d2460.png)
 ## ToDo
 - [x] Prototyping
 - [x] Modify implementation details based on the author's implementation
 - [x] Evaluate on DMC vision
-- [ ] Evaluate on Atari 100K
+- [x] Evaluate on Atari 100K
 - [ ] Add state input capability
 - [ ] Evaluate on DMC Proprio
 - [ ] etc.
-
 
 ## Acknowledgments
 This code is heavily inspired by the following works:

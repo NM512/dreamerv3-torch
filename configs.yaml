@@ -1,3 +1,4 @@
+# defaults is for Vision DMC
 defaults:
 
   logdir: null
@@ -117,8 +118,6 @@ defaults:
   disag_layers: 4
   disag_units: 400
   disag_action_cond: False
-
-visual_dmc:
 
 atari100k:
   steps: 4e5
