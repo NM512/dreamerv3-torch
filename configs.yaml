@@ -1,4 +1,3 @@
-# defaults is for Vision DMC
 defaults:
 
   logdir: null
@@ -17,6 +16,7 @@ defaults:
   precision: 16
   debug: False
   expl_gifs: False
+  video_pred_log: True
 
   # Environment
   task: 'dmc_walker_walk'
@@ -43,7 +43,7 @@ defaults:
   dyn_std_act: 'sigmoid2'
   dyn_min_std: 0.1
   dyn_temp_post: True
-  grad_heads: ['image', 'reward', 'cont']
+  grad_heads: ['decoder', 'reward', 'cont']
   units: 512
   reward_layers: 2
   cont_layers: 2
@@ -51,11 +51,12 @@ defaults:
   actor_layers: 2
   act: 'SiLU'
   norm: 'LayerNorm'
-  cnn_depth: 32
-  encoder_kernels: [4, 4, 4, 4]
-  decoder_kernels: [4, 4, 4, 4]
-  value_head: 'twohot_symlog'
-  reward_head: 'twohot_symlog'
+  encoder:
+    {mlp_keys: '$^', cnn_keys: 'image', act: 'SiLU', norm: 'LayerNorm', cnn_depth: 32, cnn_kernels: [4, 4, 4, 4], mlp_layers: 2, mlp_units: 512, symlog_inputs: True}
+  decoder:
+    {mlp_keys: '$^', cnn_keys: 'image', act: 'SiLU', norm: 'LayerNorm', cnn_depth: 32, cnn_kernels: [4, 4, 4, 4], mlp_layers: 2, mlp_units: 512, cnn_sigmoid: False, image_dist: mse, vector_dist: symlog_mse,}
+  value_head: 'symlog_disc'
+  reward_head: 'symlog_disc'
   dyn_scale: '0.5'
   rep_scale: '0.1'
   kl_free: '1.0'
@@ -118,6 +119,20 @@ defaults:
   disag_layers: 4
   disag_units: 400
   disag_action_cond: False
+
+dmc_vision:
+  steps: 1e6
+  train_ratio: 512
+  video_pred_log: true
+  encoder: {mlp_keys: '$^', cnn_keys: 'image'}
+  decoder: {mlp_keys: '$^', cnn_keys: 'image'}
+
+dmc_proprio:
+  steps: 5e5
+  train_ratio: 512
+  video_pred_log: false
+  encoder: {mlp_keys: '.*', cnn_keys: '$^'}
+  decoder: {mlp_keys: '.*', cnn_keys: '$^'}
 
 atari100k:
   steps: 4e5

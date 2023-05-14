@@ -7,20 +7,24 @@ Get dependencies:
 ```
 pip install -r requirements.txt
 ```
-Train the agent on Walker Walk in Vision DMC:
+Train the agent on Walker Walk in DMC Vision:
 ```
-python3 dreamer.py --configs defaults --task dmc_walker_walk --logdir ~/dreamerv3-torch/logdir/dmc_walker_walk
+python3 dreamer.py --configs dmc_vision --task dmc_walker_walk --logdir ./logdir/dmc_walker_walk
+```
+Train the agent on Walker Walk in DMC Proprio:
+```
+python3 dreamer.py --configs dmc_proprio --task dmc_walker_walk --logdir ./logdir/dmc_walker_walk
 ```
 Train the agent on Alien in Atari 100K:
 ```
-python3 dreamer.py --configs defaults atari100k --task atari_alien --logdir ~/dreamerv3-torch/logdir/atari_alien
+python3 dreamer.py --configs atari100k --task atari_alien --logdir ./logdir/atari_alien
 ```
 Monitor results:
 ```
 tensorboard --logdir ~/dreamerv3-torch/logdir
 ```
 
-## Evaluation Results
+## Results
 More results will be added in the future.
 
 ![dmc_vision](https://user-images.githubusercontent.com/70328564/236276650-ae706f29-4c14-4ed3-9b61-1829a1fdedae.png)
@@ -30,7 +34,7 @@ More results will be added in the future.
 - [x] Modify implementation details based on the author's implementation
 - [x] Evaluate on DMC vision
 - [x] Evaluate on Atari 100K
-- [ ] Add state input capability
+- [x] Add state input capability
 - [ ] Evaluate on DMC Proprio
 - [ ] etc.
 
