@@ -1,3 +1,4 @@
+import gym
 import numpy as np
 
 
@@ -63,6 +64,16 @@ class Atari:
         self._last_lives = None
         self._done = True
         self._step = 0
+
+    @property
+    def observation_space(self):
+        img_shape = self._size + ((1,) if self._gray else (3,))
+        print(self._env.observation_space)
+        return gym.spaces.Dict(
+            {
+                "image": gym.spaces.Box(0, 255, img_shape, np.uint8),
+            }
+        )
 
     @property
     def action_space(self):
