@@ -13,7 +13,7 @@ defaults:
   reset_every: 0
   device: 'cuda:0'
   compile: True
-  precision: 16
+  precision: 32
   debug: False
   expl_gifs: False
   video_pred_log: True
@@ -147,7 +147,6 @@ atari100k:
   train_ratio: 1024
   imag_gradient: 'reinforce'
   time_limit: 108000
-  precision: 32
 
 debug:
   debug: True
