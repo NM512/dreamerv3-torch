@@ -180,7 +180,7 @@ class RewardObs:
     def observation_space(self):
         spaces = self._env.observation_space.spaces
         assert "reward" not in spaces
-        spaces["reward"] = gym.spaces.Box(-np.inf, np.inf, dtype=np.float32)
+        spaces["reward"] = gym.spaces.Box(-np.inf, np.inf, shape=(1,), dtype=np.float32)
         return gym.spaces.Dict(spaces)
 
     def step(self, action):
