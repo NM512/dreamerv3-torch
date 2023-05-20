@@ -61,7 +61,7 @@ class Dreamer(nn.Module):
         reward = lambda f, s, a: self._wm.heads["reward"](f).mean
         self._expl_behavior = dict(
             greedy=lambda: self._task_behavior,
-            random=lambda: expl.Random(config),
+            random=lambda: expl.Random(config, act_space),
             plan2explore=lambda: expl.Plan2Explore(config, self._wm, reward),
         )[config.expl_behavior]().to(self._config.device)
 
