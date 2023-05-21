@@ -25,18 +25,15 @@ tensorboard --logdir ~/dreamerv3-torch/logdir
 ```
 
 ## Results
-More results will be added in the future.
+#### DMC Vision
+![dmcvision](https://github.com/NM512/dreamerv3-torch/assets/70328564/f6eda58f-7c41-4bb6-885c-d3525657e254)
 
-![dmc_vision](https://user-images.githubusercontent.com/70328564/236276650-ae706f29-4c14-4ed3-9b61-1829a1fdedae.png)
-![atari100k](https://user-images.githubusercontent.com/70328564/236276669-16a56be3-40d6-49fd-befa-97c72b7d2460.png)
-## ToDo
-- [x] Prototyping
-- [x] Modify implementation details based on the author's implementation
-- [x] Evaluate on DMC vision
-- [x] Evaluate on Atari 100K
-- [x] Add state input capability
-- [ ] Evaluate on DMC Proprio
-- [ ] etc.
+#### Atari 100k
+![atari100k](https://github.com/NM512/dreamerv3-torch/assets/70328564/0da6d899-d91d-44b4-a8c4-d5b37413aa11)
+
+#### DMC Proprio
+![dmcproprio](https://github.com/NM512/dreamerv3-torch/assets/70328564/7f6e47a5-3235-4bc4-bef9-15ff96782d5e)
+
 
 ## Acknowledgments
 This code is heavily inspired by the following works:
