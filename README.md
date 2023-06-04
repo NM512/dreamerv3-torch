@@ -21,12 +21,12 @@ python3 dreamer.py --configs atari100k --task atari_alien --logdir ./logdir/atar
 ```
 Monitor results:
 ```
-tensorboard --logdir ~/dreamerv3-torch/logdir
+tensorboard --logdir ./logdir
 ```
 
 ## Results
 #### DMC Vision
-![dmcvision](https://github.com/NM512/dreamerv3-torch/assets/70328564/f6eda58f-7c41-4bb6-885c-d3525657e254)
+![dmcvision](https://github.com/NM512/dreamerv3-torch/assets/70328564/b710d217-2428-4fa0-8471-55e15ec5aa43)
 
 #### Atari 100k
 ![atari100k](https://github.com/NM512/dreamerv3-torch/assets/70328564/0da6d899-d91d-44b4-a8c4-d5b37413aa11)
