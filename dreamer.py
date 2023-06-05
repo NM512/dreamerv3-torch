@@ -55,10 +55,10 @@ class Dreamer(nn.Module):
         self._task_behavior = models.ImagBehavior(
             config, self._wm, config.behavior_stop_grad
         )
-        if config.compile:
+        if config.compile and os.name != 'nt':  # compilation is not supported on windows
             self._wm = torch.compile(self._wm)
             self._task_behavior = torch.compile(self._task_behavior)
-        reward = lambda f, s, a: self._wm.heads["reward"](f).mean
+        reward = lambda f, s, a: self._wm.heads["reward"](f).mean()
         self._expl_behavior = dict(
             greedy=lambda: self._task_behavior,
             random=lambda: expl.Random(config, act_space),
