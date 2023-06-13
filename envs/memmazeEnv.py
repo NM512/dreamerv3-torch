@@ -47,17 +47,32 @@ class MZGymWrapper:
     else:
       return {self._act_key: self._env.action_space}
 
+  @property
+  def observation_space(self):
+    img_shape = self._size + ((1,) if self._gray else (3,))
+    return gym.spaces.Dict(
+      {
+        "image": gym.spaces.Box(0, 255, img_shape, np.uint8),
+      }
+    )
+
+  @property
+  def action_space(self):
+    space = self._env.action_space
+    space.discrete = True
+    return space
+
   def step(self, action):
-    if not self._act_is_dict:
-      action = action[self._act_key]
+    # if not self._act_is_dict:
+    #   action = action[self._act_key]
     obs, reward, done, info = self._env.step(action)
     if not self._obs_is_dict:
       obs = {self._obs_key: obs}
-    obs['reward'] = float(reward)
+    # obs['reward'] = float(reward)
     obs['is_first'] = False
     obs['is_last'] = done
     obs['is_terminal'] = info.get('is_terminal', done)
-    return obs
+    return obs, reward, done, info
 
   def reset(self):
     obs = self._env.reset()

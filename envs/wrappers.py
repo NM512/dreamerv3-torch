@@ -77,8 +77,8 @@ class CollectDataset:
             dtype = {16: np.int16, 32: np.int32, 64: np.int64}[self._precision]
         elif np.issubdtype(value.dtype, np.uint8):
             dtype = np.uint8
-        elif np.issubdtype(value.dtype, np.bool):
-            dtype = np.bool
+        elif np.issubdtype(value.dtype, np.bool_):
+            dtype = np.bool_
         else:
             raise NotImplementedError(value.dtype)
         return value.astype(dtype)
@@ -96,6 +96,7 @@ class TimeLimit:
     def step(self, action):
         assert self._step is not None, "Must reset environment."
         obs, reward, done, info = self._env.step(action)
+        # teets = self._env.step(action)
         self._step += 1
         if self._step >= self._duration:
             done = True

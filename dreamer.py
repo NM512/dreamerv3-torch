@@ -215,7 +215,7 @@ def make_env(config, logger, mode, train_eps, eval_eps):
         env = gym.make('memory_maze:MemoryMaze-9x9-v0')
         from envs.memmazeEnv import MZGymWrapper
         env = MZGymWrapper(env)
-        
+        #from envs.memmazeEnv import OneHotAction as OneHotAction2
         env = wrappers.OneHotAction(env)
     elif suite == "---------mazed":
         from memory_maze import tasks
