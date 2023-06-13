@@ -210,6 +210,18 @@ def make_env(config, logger, mode, train_eps, eval_eps):
             task, mode if "train" in mode else "test", config.action_repeat
         )
         env = wrappers.OneHotAction(env)
+    elif suite == "mazegym":
+        import gym
+        env = gym.make('memory_maze:MemoryMaze-9x9-v0')
+        from envs.memmaze import MZGymWrapper
+        env = MZGymWrapper(env)
+        
+        env = wrappers.OneHotAction(env)
+    elif suite == "---------mazed":
+        from memory_maze import tasks
+        ## !!!!!!!!!!!!!!!!!!!!!!!!
+        env = tasks.memory_maze_9x9()
+        env = wrappers.OneHotAction(env)
     else:
         raise NotImplementedError(suite)
     env = wrappers.TimeLimit(env, config.time_limit)
