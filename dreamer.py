@@ -213,7 +213,7 @@ def make_env(config, logger, mode, train_eps, eval_eps):
     elif suite == "mazegym":
         import gym
         env = gym.make('memory_maze:MemoryMaze-9x9-v0')
-        from envs.memmaze import MZGymWrapper
+        from envs.memmazeEnv import MZGymWrapper
         env = MZGymWrapper(env)
         
         env = wrappers.OneHotAction(env)

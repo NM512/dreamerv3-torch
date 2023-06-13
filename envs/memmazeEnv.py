@@ -9,7 +9,7 @@ import gym
 import numpy as np
 
 
-class GymWrapper:
+class MZGymWrapper:
 
   def __init__(self, env, obs_key='image', act_key='action'):
     self._env = env
