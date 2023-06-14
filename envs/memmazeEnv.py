@@ -11,12 +11,14 @@ import numpy as np
 
 class MZGymWrapper:
 
-  def __init__(self, env, obs_key='image', act_key='action'):
+  def __init__(self, env, obs_key='image', act_key='action', size=(64, 64)):
     self._env = env
     self._obs_is_dict = hasattr(self._env.observation_space, 'spaces')
     self._act_is_dict = hasattr(self._env.action_space, 'spaces')
     self._obs_key = obs_key
     self._act_key = act_key
+    self._size = size
+    self._gray = False
 
   def __getattr__(self, name):
     if name.startswith('__'):

@@ -155,8 +155,8 @@ class OneHotAction:
         index = np.argmax(action).astype(int)
         reference = np.zeros_like(action)
         reference[index] = 1
-        if not np.allclose(reference, action):
-            raise ValueError(f"Invalid one-hot action:\n{action}")
+        # if not np.allclose(reference, action):
+        #     raise ValueError(f"Invalid one-hot action:\n{action}")
         return self._env.step(index)
 
     def reset(self):

@@ -127,7 +127,7 @@ def simulate(agent, envs, steps=0, episodes=0, state=None):
     # Initialize or unpack simulation state.
     if state is None:
         step, episode = 0, 0
-        done = np.ones(len(envs), np.bool)
+        done = np.ones(len(envs), np.bool_)
         length = np.zeros(len(envs), np.int32)
         obs = [None] * len(envs)
         agent_state = None
