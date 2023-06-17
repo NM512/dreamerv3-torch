@@ -400,9 +400,9 @@ class ImagBehavior(nn.Module):
             reward += self._config.actor_state_entropy() * state_ent
         value = self.value(imag_feat).mode()
         target = tools.lambda_return(
-            reward[:-1],
+            reward[1:],
             value[:-1],
-            discount[:-1],
+            discount[1:],
             bootstrap=value[-1],
             lambda_=self._config.discount_lambda,
             axis=0,
