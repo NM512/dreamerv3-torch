@@ -157,7 +157,7 @@ debug:
   batch_length: 20
 
 mazegym:
-  task: 9
+  task: '9'
   steps: 1e6
   action_repeat: 2
 
