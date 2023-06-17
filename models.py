@@ -399,9 +399,6 @@ class ImagBehavior(nn.Module):
         if self._config.future_entropy and self._config.actor_state_entropy() > 0:
             reward += self._config.actor_state_entropy() * state_ent
         value = self.value(imag_feat).mode()
-        # value(15, 960, ch)
-        # action(15, 960, ch)
-        # discount(15, 960, ch)
         target = tools.lambda_return(
             reward[:-1],
             value[:-1],
