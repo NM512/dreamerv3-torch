@@ -25,7 +25,7 @@ defaults:
   action_repeat: 2
   time_limit: 1000
   grayscale: False
-  prefill: 3500
+  prefill: 2500
   eval_noise: 0.0
   reward_EMA: True
 
@@ -148,10 +148,6 @@ atari100k:
   imag_gradient: 'reinforce'
   time_limit: 108000
 
-mazed:
-  task: "memmaze_9_9"
-  steps: 1e6
-  action_repeat: 2
 
 debug:
   debug: True
@@ -161,13 +157,10 @@ debug:
   batch_length: 20
 
 mazegym:
-  #task: "memory_maze:MemoryMaze-9x9-v0"
+  task: 9
   steps: 1e6
   action_repeat: 2
 
-mazedeepm:
-  task: "memmaze_9_9"
-  steps: 1e6
-  action_repeat: 2
+
 
 

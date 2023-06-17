@@ -212,16 +212,17 @@ def make_env(config, logger, mode, train_eps, eval_eps):
         env = wrappers.OneHotAction(env)
     elif suite == "mazegym":
         import gym
-        env = gym.make('memory_maze:MemoryMaze-9x9-v0')
+        if task == 9:
+            env = gym.make('memory_maze:MemoryMaze-9x9-v0')
+        elif task == 15:
+            env = gym.make('memory_maze:MemoryMaze-15x15-v0')
+        else:
+            raise NotImplementedError(suite)
         from envs.memmazeEnv import MZGymWrapper
         env = MZGymWrapper(env)
         #from envs.memmazeEnv import OneHotAction as OneHotAction2
-        env = wrappers.OneHotAction(env)
-    elif suite == "---------mazed":
-        from memory_maze import tasks
-        ## !!!!!!!!!!!!!!!!!!!!!!!!
-        env = tasks.memory_maze_9x9()
-        env = wrappers.OneHotAction(env)
+        env = wrappers.OneHotAction2(env)
+
     else:
         raise NotImplementedError(suite)
     env = wrappers.TimeLimit(env, config.time_limit)
