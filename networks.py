@@ -549,6 +549,7 @@ class ConvDecoder(nn.Module):
         self._embed_size = minres**2 * depth * 2 ** (layer_num - 1)
 
         self._linear_layer = nn.Linear(feat_size, self._embed_size)
+        self._linear_layer.apply(tools.weight_init)
         in_dim = self._embed_size // (minres**2)
 
         layers = []
