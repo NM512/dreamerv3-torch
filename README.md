@@ -19,6 +19,10 @@ Train the agent on Alien in Atari 100K:
 ```
 python3 dreamer.py --configs atari100k --task atari_alien --logdir ./logdir/atari_alien
 ```
+Train the agent on Crafter:
+```
+python3 dreamer.py --configs crafter --logdir ./logdir/crafter
+```
 Monitor results:
 ```
 tensorboard --logdir ./logdir

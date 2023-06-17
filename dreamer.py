@@ -211,6 +211,11 @@ def make_env(config, logger, mode, train_eps, eval_eps):
             task, mode if "train" in mode else "test", config.action_repeat
         )
         env = wrappers.OneHotAction(env)
+    elif suite == "crafter":
+        import envs.crafter as crafter
+
+        env = crafter.Crafter(task, config.size)
+        env = wrappers.OneHotAction(env)
     else:
         raise NotImplementedError(suite)
     env = wrappers.TimeLimit(env, config.time_limit)
