@@ -215,7 +215,9 @@ class RSSM(nn.Module):
                     is_first,
                     is_first.shape + (1,) * (len(val.shape) - len(is_first.shape)),
                 )
-                prev_state[key] = val * (1.0 - is_first_r) + init_state[key] * is_first_r
+                prev_state[key] = (
+                    val * (1.0 - is_first_r) + init_state[key] * is_first_r
+                )
 
         prior = self.img_step(prev_state, prev_action, None, sample)
         if self._shared:
@@ -345,7 +347,11 @@ class MultiEncoder(nn.Module):
     ):
         super(MultiEncoder, self).__init__()
         excluded = ("is_first", "is_last", "is_terminal", "reward")
-        shapes = {k: v for k, v in shapes.items() if k not in excluded}
+        shapes = {
+            k: v
+            for k, v in shapes.items()
+            if k not in excluded and not k.startswith("log_")
+        }
         self.cnn_shapes = {
             k: v for k, v in shapes.items() if len(v) == 3 and re.match(cnn_keys, k)
         }
@@ -547,6 +553,7 @@ class ConvDecoder(nn.Module):
         self._embed_size = minres**2 * depth * 2 ** (layer_num - 1)
 
         self._linear_layer = nn.Linear(feat_size, self._embed_size)
+        self._linear_layer.apply(tools.weight_init)
         in_dim = self._embed_size // (minres**2)
 
         layers = []
