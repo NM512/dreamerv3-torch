@@ -1,8 +1,6 @@
 import atexit
 import os
 import sys
-import threading
-import traceback
 
 import cloudpickle
 import gym
@@ -10,7 +8,7 @@ import numpy as np
 
 ###from tf dreamerv2 code
 
-class MZGymWrapper:
+class MemoryMaze:
 
   def __init__(self, env, obs_key='image', act_key='action', size=(64, 64)):
     self._env = env
@@ -74,7 +72,7 @@ class MZGymWrapper:
     # obs['reward'] = float(reward)
     obs['is_first'] = False
     obs['is_last'] = done
-    obs['is_terminal'] = info.get('is_terminal', done)
+    obs['is_terminal'] = info.get('is_terminal', False)
     return obs, reward, done, info
 
   def reset(self):
