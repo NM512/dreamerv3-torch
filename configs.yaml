@@ -172,9 +172,21 @@ atari100k:
   imag_gradient: 'reinforce'
   time_limit: 108000
 
+
 debug:
   debug: True
   pretrain: 1
   prefill: 1
   batch_size: 10
   batch_length: 20
+
+MemoryMaze:
+  actor_dist: 'onehot'
+  imag_gradient: 'reinforce'
+  task: '9x9'
+  steps: 1e6
+  action_repeat: 2
+
+
+
+
