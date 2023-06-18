@@ -181,7 +181,7 @@ debug:
   batch_length: 20
 
 MemoryMaze:
-  steps: 1e6
+  steps: 1e7
   action_repeat: 2
   actor_dist: 'onehot'
   imag_gradient: 'reinforce'
