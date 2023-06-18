@@ -213,13 +213,15 @@ def make_env(config, logger, mode, train_eps, eval_eps):
         env = wrappers.OneHotAction(env)
     elif suite == "MemoryMaze":
         import gym
-        if task == '9x9':
-            env = gym.make('memory_maze:MemoryMaze-9x9-v0')
-        elif task == '15x15':
-            env = gym.make('memory_maze:MemoryMaze-15x15-v0')
+
+        if task == "9x9":
+            env = gym.make("memory_maze:MemoryMaze-9x9-v0")
+        elif task == "15x15":
+            env = gym.make("memory_maze:MemoryMaze-15x15-v0")
         else:
             raise NotImplementedError(suite)
         from envs.memorymaze import MemoryMaze
+
         env = MemoryMaze(env)
         env = wrappers.OneHotAction(env)
     elif suite == "crafter":
