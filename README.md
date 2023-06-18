@@ -7,26 +7,24 @@ Get dependencies:
 ```
 pip install -r requirements.txt
 ```
-Train the agent on Walker Walk in DMC Vision:
+Run training on DMC Vision:
 ```
 python3 dreamer.py --configs dmc_vision --task dmc_walker_walk --logdir ./logdir/dmc_walker_walk
-```
-Train the agent on Walker Walk in DMC Proprio:
-```
-python3 dreamer.py --configs dmc_proprio --task dmc_walker_walk --logdir ./logdir/dmc_walker_walk
-```
-Train the agent on Alien in Atari 100K:
-```
-python3 dreamer.py --configs atari100k --task atari_alien --logdir ./logdir/atari_alien
-```
-Train the agent on Crafter:
-```
-python3 dreamer.py --configs crafter --logdir ./logdir/crafter
 ```
 Monitor results:
 ```
 tensorboard --logdir ./logdir
 ```
+
+## Benchmarks
+So far, this repository allows testing the following benchmarks.
+| Environment        | Observation | Action | Description |
+|-------------------|---|---|-----------------------|
+| [DMC Proprio](https://github.com/deepmind/dm_control) | State | Continuous | This benchmark contains 18 continuous control tasks with low-dimensional inputs and a budget of 500K environment steps. |
+| [DMC Vision](https://github.com/deepmind/dm_control) | Image | Continuous | This benchmark consists of 20 continuous control tasks where the agent receives only high-dimensional images as inputs and a budget of 1M environment steps. |
+| [Atari 100k](https://github.com/openai/atari-py) | Image | Discrete | This benchmark includes 26 Atari games and a budget of only 400K environment steps, amounting to 100K steps after action repeat or 2 hours of real time. |
+| [Crafter](https://github.com/danijar/crafter) | Image | Discrete | This survival environment evaluates diverse agent abilities, including exploration, reasoning, credit assignment, and generalization.|
+| [Memory Maze](https://github.com/jurgisp/memory-maze) | Image | Discrete | Memory Maze is a 3D benchmark with randomized mazes to evaluate RL agents' long-term memory.|
 
 ## Results
 #### DMC Vision
