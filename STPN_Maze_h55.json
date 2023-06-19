@@ -1,0 +1,61 @@
+{
+  "stp":
+    {
+      "learn_plastic_weight_params": true,
+      "learn_plastic_weight_params_dims": [0,1],
+      "plastic_weight_clamp_val": 1.0,
+      "which_relative_layer_input_use_postsynaptic": 2,
+      "plastic_bias": false,
+      "plasticity_type": {
+        "weight": "stp",
+        "bias": "stp"
+      },
+      "plasticity_type_kwargs": {
+        "weight": {
+          "plastic_weight_dependent_factor": {
+            "learn_parameter": false,
+            "fixed_parameter_value": 0.5
+          }
+        },
+        "bias": {
+          "plastic_bias_dependent_factor": {
+            "learn_parameter": false,
+            "fixed_parameter_value": 0.5
+          }
+        },
+        "weight_norm": {
+          "ord": 2
+        },
+        "plastic_weight_norm": {
+          "ord": 2,
+          "norm": "G",
+          "time": "post"
+        }
+      },
+      "learn_plastic_bias_params": true,
+      "learn_plastic_bias_params_dims": [0],
+      "plastic_weights_init_config" : {
+          "weight_lambda": {
+              "mode": "uniform", "mean": 0.5, "spread": 0.5, "hidden_weighting": null
+          },
+          "weight_gamma":{
+              "mode":"uniform", "mean": 0, "spread": 0.001, "hidden_weighting": "both"
+          },
+          "bias_lambda": {
+            "mode": "uniform", "mean": 0.5, "spread": 0.5, "hidden_weighting": null
+          },
+          "bias_gamma": {
+            "mode":"uniform", "mean": 0, "spread": 0.001, "hidden_weighting": "both"
+          }
+      },
+      "plastic_weight_connections": "all"
+    },
+  "params_override_eval": {
+    "nbiter": 50000,
+    "bs": 512
+  },
+  "command": {
+    "train": "python3 run_maze.py --net_type stpn --nbiter 50000 --bs 512 --eplen 200 --hs 55 --type stpn --lr 1e-4 --l2 0 --addpw 3 --pe 1000 --blossv 0.1 --bent 0.03 --rew 10 --save_every 1000 --rsp 1  --da tanh  --msize 13 --wp 0.0  --gc 4.0  --eval-energy --config_file_path config/STPN_Maze_h55.json --rngseed 0  --gpu 0",
+    "eval": "python3 run_maze.py --net_type stpn --nbiter 100 --bs 512 --eplen 200 --hs 55 --type stpn --lr 1e-4 --l2 0 --addpw 3 --pe 10 --blossv 0.1 --bent 0.03 --rew 10 --save_every 10 --rsp 1  --da tanh  --msize 13 --wp 0.0  --gc 4.0  --eval-energy --config_file_path config/STPN_Maze_h55.json --config_file_train config/STPN_Maze_h55.json  --gpu 0 --eval --rngseed 0"
+  }
+}
