@@ -76,6 +76,16 @@ class RSSM(nn.Module):
         elif cell == "gru_layer_norm":
             self._cell = GRUCell(self._hidden, self._deter, norm=True)
             self._cell.apply(tools.weight_init)
+        elif cell == "stpn":
+            rnn_input_size = self._hidden
+            lstm_state_size = 256
+            import json
+            config_stp = json.load(open('./STPN_Maze_h55.json'))
+            stpc = config_stp.get('stp', {})
+            from STPN.Scripts.Nets import SimpleNetSTPN, SimpleNetSTPMLP
+            self._cell = SimpleNetSTPN(rnn_input_size, lstm_state_size, stp=stpc, bias=True)
+            #self._cell = SimpleNetSTPMLP(rnn_input_size, lstm_state_size, stp=stpc, bias=True)
+
         else:
             raise NotImplementedError(cell)
 
@@ -260,7 +270,12 @@ class RSSM(nn.Module):
         for _ in range(self._rec_depth):  # rec depth is not correctly implemented
             deter = prev_state["deter"]
             # (batch, hidden), (batch, deter) -> (batch, deter), (batch, deter)
-            x, deter = self._cell(x, [deter])
+
+            #x, deter = self._cell(x, [deter])
+            x, deter, status = self._cell(x, status)
+
+
+
             deter = deter[0]  # Keras wraps the state in a list.
         # (batch, deter) -> (batch, hidden)
         x = self._img_out_layers(x)

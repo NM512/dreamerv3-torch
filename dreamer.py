@@ -215,6 +215,10 @@ def make_env(config, logger, mode, train_eps, eval_eps):
         from envs.memorymaze import MemoryMaze
         env = MemoryMaze(task)
         env = wrappers.OneHotAction(env)
+    elif suite == "MemoryMazeStpn":
+        from envs.memorymaze import MemoryMaze
+        env = MemoryMaze(task)
+        env = wrappers.OneHotAction(env)
     elif suite == "crafter":
         import envs.crafter as crafter
         env = crafter.Crafter(task, config.size)
