@@ -53,6 +53,11 @@ class RSSM(nn.Module):
         self._initial = initial
         self._embed = embed
         self._device = device
+        self._celltype = cell
+        self._stpnstatusev = None
+        self._stpnstatustra = None
+
+
 
         inp_layers = []
         if self._discrete:
@@ -85,9 +90,11 @@ class RSSM(nn.Module):
             from STPN.Scripts.Nets import SimpleNetSTPN, SimpleNetSTPMLP
             self._cell = SimpleNetSTPN(rnn_input_size, lstm_state_size, stp=stpc, bias=True)
             #self._cell = SimpleNetSTPMLP(rnn_input_size, lstm_state_size, stp=stpc, bias=True)
-
         else:
             raise NotImplementedError(cell)
+
+        self._stpnstatusev = self._cell.rnn.states_init(batch_size=batch_size, device=self._device)
+        self._stpnstatustra = self._cell.rnn.states_init(batch_size=config.batch_size * config.batch_length, device=self._device)
 
         img_out_layers = []
         inp_dim = self._deter
@@ -132,6 +139,7 @@ class RSSM(nn.Module):
             )
 
     def initial(self, batch_size):
+        #print("init state ,batchsize"), print(batch_size)
         deter = torch.zeros(batch_size, self._deter).to(self._device)
         if self._discrete:
             state = dict(
@@ -150,20 +158,20 @@ class RSSM(nn.Module):
                 stoch=torch.zeros([batch_size, self._stoch]).to(self._device),
                 deter=deter,
             )
-        stpnstatus = self._cell.rnn.states_init(batch_size=batch_size, device=self._device)
+
         if self._initial == "zeros":
-            return state,stpnstatus
+            return state
         elif self._initial == "learned":
             state["deter"] = torch.tanh(self.W).repeat(batch_size, 1)
             state["stoch"] = self.get_stoch(state["deter"])
-            return state,stpnstatus
+            return state
         else:
             raise NotImplementedError(self._initial)
 
     def observe(self, embed, action, is_first, state=None):
         swap = lambda x: x.permute([1, 0] + list(range(2, len(x.shape))))
         if state is None:
-            state,stpnstatus = self.initial(action.shape[0])
+            state = self.initial(action.shape[0])
         # (batch, time, ch) -> (time, batch, ch)
         embed, action, is_first = swap(embed), swap(action), swap(is_first)
         # prev_state[0] means selecting posterior of return(posterior, prior) from obs_step
@@ -183,7 +191,7 @@ class RSSM(nn.Module):
     def imagine(self, action, state=None):
         swap = lambda x: x.permute([1, 0] + list(range(2, len(x.shape))))
         if state is None:
-            state,stpnstatus = self.initial(action.shape[0])
+            state = self.initial(action.shape[0])
         assert isinstance(state, dict), state
         action = action
         action = swap(action)
@@ -220,7 +228,7 @@ class RSSM(nn.Module):
         if torch.sum(is_first) > 0:
             is_first = is_first[:, None]
             prev_action *= 1.0 - is_first
-            init_state,stpnstatus = self.initial(len(is_first))
+            init_state = self.initial(len(is_first))
             for key, val in prev_state.items():
                 is_first_r = torch.reshape(
                     is_first,
@@ -250,7 +258,7 @@ class RSSM(nn.Module):
         return post, prior
 
     # this is used for making future image
-    def img_step(self, prev_state, prev_action, embed=None, sample=True, stpnstatus):
+    def img_step(self, prev_state, prev_action, embed=None, sample=True):
         # (batch, stoch, discrete_num)
         prev_action *= (1.0 / torch.clip(torch.abs(prev_action), min=1.0)).detach()
         prev_stoch = prev_state["stoch"]
@@ -269,12 +277,19 @@ class RSSM(nn.Module):
         # (batch, stoch * discrete_num + action, embed) -> (batch, hidden)
         x = self._inp_layers(x)
         for _ in range(self._rec_depth):  # rec depth is not correctly implemented
-            #deter = prev_state["deter"]
             # (batch, hidden), (batch, deter) -> (batch, deter), (batch, deter)
 
-            #x, deter = self._cell(x, [deter])
-            x,  stpnstatus = self._cell(x, stpnstatus)
-            deter = [x]
+            if self._celltype == "stpn":
+                if evla:
+                    x, self._stpnstatusev = self._cell(x, self._stpnstatus)
+                else:
+                    x, self._stpnstatustra = self._cell(x, self._stpnstatus)
+                deter = [x]
+
+            else:
+                deter = prev_state["deter"]
+                x, deter = self._cell(x, [deter])
+
 
             deter = deter[0]  # Keras wraps the state in a list.
         # (batch, deter) -> (batch, hidden)
