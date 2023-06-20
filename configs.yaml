@@ -69,7 +69,7 @@ defaults:
 
   # Training
   batch_size: 16
-  batch_length: 64
+  batch_length: 16
   train_ratio: 512
   pretrain: 100
   model_lr: 1e-4
@@ -189,6 +189,8 @@ MemoryMaze:
 
 
 MemoryMazeStpn:
+  eval_episode_num: 1
+  dyn_hidden: 64 #same deter ???
   dyn_deter: 64
   dyn_cell: 'stpn'
   steps: 1e6
