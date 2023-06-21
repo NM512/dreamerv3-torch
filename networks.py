@@ -98,8 +98,8 @@ class RSSM(nn.Module):
             raise NotImplementedError(cell)
 
         self._stpnstatusev = self._cell.rnn.states_init(batch_size=1, device=self._device)
-        self._stpnstatusvp = self._cell.rnn.states_init(batch_size=1 * bs, device=self._device)
-        self._stpnstatustra = self._cell.rnn.states_init(batch_size=bl * bs, device=self._device)
+        self._stpnstatusvp = self._cell.rnn.states_init(batch_size=1 * self._bs, device=self._device)
+        self._stpnstatustra = self._cell.rnn.states_init(batch_size=self._bl * self._bs, device=self._device)
 
         img_out_layers = []
         inp_dim = self._deter
@@ -144,7 +144,7 @@ class RSSM(nn.Module):
             )
 
     def initial(self, batch_size):
-        print("init state ,batchsize"), print(batch_size)
+        #print("init state ,batchsize"), print(batch_size)
         deter = torch.zeros(batch_size, self._deter).to(self._device)
         if self._discrete:
             state = dict(
@@ -164,6 +164,10 @@ class RSSM(nn.Module):
                 deter=deter,
             )
 
+        self._stpnstatusev = self._cell.rnn.states_init(batch_size=1, device=self._device)
+        self._stpnstatusvp = self._cell.rnn.states_init(batch_size=1 * self._bs, device=self._device)
+        self._stpnstatustra = self._cell.rnn.states_init(batch_size=self._bl * self._bs, device=self._device)
+
         if self._initial == "zeros":
             return state
         elif self._initial == "learned":
@@ -179,7 +183,7 @@ class RSSM(nn.Module):
             state = self.initial(action.shape[0])
         # (batch, time, ch) -> (time, batch, ch)
         embed, action, is_first = swap(embed), swap(action), swap(is_first)
-        print('state["deter"].shape[0]'), print(state["deter"].shape[0])
+        #print('state["deter"].shape[0]'), print(state["deter"].shape[0])
 
         # prev_state[0] means selecting posterior of return(posterior, prior) from obs_step
         post, prior = tools.static_scan(

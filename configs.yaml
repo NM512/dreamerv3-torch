@@ -189,12 +189,12 @@ MemoryMaze:
 
 
 MemoryMazeStpn:
-  prefill: 10
+  prefill: 3000
   batch_size: 6
-  batch_length: 10
-  eval_episode_num: 1
-  dyn_hidden: 64 #same deter ???
-  dyn_deter: 64
+  batch_length: 64
+  eval_episode_num: 5
+  dyn_hidden: 256 #same deter ???
+  dyn_deter: 256
   dyn_cell: 'stpn'
   steps: 1e6
   action_repeat: 2
