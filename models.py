@@ -58,6 +58,8 @@ class WorldModel(nn.Module):
             config.num_actions,
             self.embed_size,
             config.device,
+            config.batch_size,
+            config.batch_length,
         )
         self.heads = nn.ModuleDict()
         if config.dyn_discrete:

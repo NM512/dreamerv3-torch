@@ -33,6 +33,8 @@ class RSSM(nn.Module):
         num_actions=None,
         embed=None,
         device=None,
+        bs=16,
+        bl=64,
     ):
         super(RSSM, self).__init__()
         self._stoch = stoch
@@ -54,6 +56,8 @@ class RSSM(nn.Module):
         self._embed = embed
         self._device = device
         self._celltype = cell
+        self._bs = bs
+        self._bl = bl
         self._stpnstatusev = None
         self._stpnstatustra = None
 
@@ -93,8 +97,9 @@ class RSSM(nn.Module):
         else:
             raise NotImplementedError(cell)
 
-        self._stpnstatusev = self._cell.rnn.states_init(batch_size=batch_size, device=self._device)
-        self._stpnstatustra = self._cell.rnn.states_init(batch_size=config.batch_size * config.batch_length, device=self._device)
+        self._stpnstatusev = self._cell.rnn.states_init(batch_size=1, device=self._device)
+        self._stpnstatusvp = self._cell.rnn.states_init(batch_size=1 * bs, device=self._device)
+        self._stpnstatustra = self._cell.rnn.states_init(batch_size=bl * bs, device=self._device)
 
         img_out_layers = []
         inp_dim = self._deter
@@ -139,7 +144,7 @@ class RSSM(nn.Module):
             )
 
     def initial(self, batch_size):
-        #print("init state ,batchsize"), print(batch_size)
+        print("init state ,batchsize"), print(batch_size)
         deter = torch.zeros(batch_size, self._deter).to(self._device)
         if self._discrete:
             state = dict(
@@ -174,6 +179,8 @@ class RSSM(nn.Module):
             state = self.initial(action.shape[0])
         # (batch, time, ch) -> (time, batch, ch)
         embed, action, is_first = swap(embed), swap(action), swap(is_first)
+        print('state["deter"].shape[0]'), print(state["deter"].shape[0])
+
         # prev_state[0] means selecting posterior of return(posterior, prior) from obs_step
         post, prior = tools.static_scan(
             lambda prev_state, prev_act, embed, is_first: self.obs_step(
@@ -262,6 +269,9 @@ class RSSM(nn.Module):
         # (batch, stoch, discrete_num)
         prev_action *= (1.0 / torch.clip(torch.abs(prev_action), min=1.0)).detach()
         prev_stoch = prev_state["stoch"]
+
+        #print('prev_state["deter"].shape[0]'), print(prev_state["deter"].shape[0])
+
         if self._discrete:
             shape = list(prev_stoch.shape[:-2]) + [self._stoch * self._discrete]
             # (batch, stoch, discrete_num) -> (batch, stoch * discrete_num)
@@ -278,18 +288,17 @@ class RSSM(nn.Module):
         x = self._inp_layers(x)
         for _ in range(self._rec_depth):  # rec depth is not correctly implemented
             # (batch, hidden), (batch, deter) -> (batch, deter), (batch, deter)
-
             if self._celltype == "stpn":
-                if evla:
-                    x, self._stpnstatusev = self._cell(x, self._stpnstatus)
+                if prev_state["deter"].shape[0]==1:
+                    x, self._stpnstatusev = self._cell(x, self._stpnstatusev)
+                elif prev_state["deter"].shape[0]== self._bs :
+                    x, self._stpnstatusvp = self._cell(x, self._stpnstatusvp)
                 else:
-                    x, self._stpnstatustra = self._cell(x, self._stpnstatus)
+                    x, self._stpnstatustra = self._cell(x, self._stpnstatustra)
                 deter = [x]
-
             else:
                 deter = prev_state["deter"]
                 x, deter = self._cell(x, [deter])
-
 
             deter = deter[0]  # Keras wraps the state in a list.
         # (batch, deter) -> (batch, hidden)

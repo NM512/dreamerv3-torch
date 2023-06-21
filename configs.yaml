@@ -189,6 +189,9 @@ MemoryMaze:
 
 
 MemoryMazeStpn:
+  prefill: 10
+  batch_size: 6
+  batch_length: 10
   eval_episode_num: 1
   dyn_hidden: 64 #same deter ???
   dyn_deter: 64
