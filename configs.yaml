@@ -187,6 +187,23 @@ MemoryMaze:
   imag_gradient: 'reinforce'
   task: 'MemoryMaze_9x9'
 
+ataristpn:
+  steps: 4e5
+  envs: 1
+  action_repeat: 4
+  eval_episode_num: 100
+  stickey: False
+  lives: unused
+  noops: 30
+  resize: opencv
+  actions: needed
+  actor_dist: 'onehot'
+  train_ratio: 1024
+  imag_gradient: 'reinforce'
+  time_limit: 108000
+  dyn_hidden: 64 #same deter ???
+  dyn_deter: 64
+  dyn_cell: 'stpn'
 
 MemoryMazeStpn:
   prefill: 3000

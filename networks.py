@@ -97,9 +97,10 @@ class RSSM(nn.Module):
         else:
             raise NotImplementedError(cell)
 
-        self._stpnstatusev = self._cell.rnn.states_init(batch_size=1, device=self._device)
-        self._stpnstatusvp = self._cell.rnn.states_init(batch_size=1 * self._bs, device=self._device)
-        self._stpnstatustra = self._cell.rnn.states_init(batch_size=self._bl * self._bs, device=self._device)
+        if self._celltype == "stpn":
+            self._stpnstatusev = self._cell.rnn.states_init(batch_size=1, device=self._device)
+            self._stpnstatusvp = self._cell.rnn.states_init(batch_size=1 * self._bs, device=self._device)
+            self._stpnstatustra = self._cell.rnn.states_init(batch_size=self._bl * self._bs, device=self._device)
 
         img_out_layers = []
         inp_dim = self._deter
@@ -164,9 +165,12 @@ class RSSM(nn.Module):
                 deter=deter,
             )
 
-        self._stpnstatusev = self._cell.rnn.states_init(batch_size=1, device=self._device)
-        self._stpnstatusvp = self._cell.rnn.states_init(batch_size=1 * self._bs, device=self._device)
-        self._stpnstatustra = self._cell.rnn.states_init(batch_size=self._bl * self._bs, device=self._device)
+        if self._celltype == "stpn":
+            self._stpnstatusev = self._cell.rnn.states_init(batch_size=1, device=self._device)
+            self._stpnstatusvp = self._cell.rnn.states_init(batch_size=1 * self._bs, device=self._device)
+            self._stpnstatustra = self._cell.rnn.states_init(batch_size=self._bl * self._bs, device=self._device)
+        else:
+            pass
 
         if self._initial == "zeros":
             return state

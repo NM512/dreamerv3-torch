@@ -193,24 +193,24 @@ class WorldModel(nn.Module):
         obs = {k: torch.Tensor(v).to(self._config.device) for k, v in obs.items()}
         return obs
 
-    def video_pred(self, data):
+    def video_pred(self, data, bs):
         data = self.preprocess(data)
         embed = self.encoder(data)
 
         states, _ = self.dynamics.observe(
-            embed[:6, :5], data["action"][:6, :5], data["is_first"][:6, :5]
+            embed[:bs, :5], data["action"][:bs, :5], data["is_first"][:bs, :5]
         )
         recon = self.heads["decoder"](self.dynamics.get_feat(states))["image"].mode()[
-            :6
+            :bs
         ]
-        reward_post = self.heads["reward"](self.dynamics.get_feat(states)).mode()[:6]
+        reward_post = self.heads["reward"](self.dynamics.get_feat(states)).mode()[:bs]
         init = {k: v[:, -1] for k, v in states.items()}
-        prior = self.dynamics.imagine(data["action"][:6, 5:], init)
+        prior = self.dynamics.imagine(data["action"][:bs, 5:], init)
         openl = self.heads["decoder"](self.dynamics.get_feat(prior))["image"].mode()
         reward_prior = self.heads["reward"](self.dynamics.get_feat(prior)).mode()
         # observed image is given until 5 steps
         model = torch.cat([recon[:, :5], openl], 1)
-        truth = data["image"][:6] + 0.5
+        truth = data["image"][:bs] + 0.5
         model = model + 0.5
         error = (model - truth + 1.0) / 2.0
 

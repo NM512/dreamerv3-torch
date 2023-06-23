@@ -93,7 +93,7 @@ class Dreamer(nn.Module):
                     self._logger.scalar(name, float(np.mean(values)))
                     self._metrics[name] = []
                 if self._config.video_pred_log:
-                    openl = self._wm.video_pred(next(self._dataset))
+                    openl = self._wm.video_pred(next(self._dataset), self._config.batch_size)
                     self._logger.video("train_openl", to_np(openl))
                 self._logger.write(fps=True)
 
@@ -381,7 +381,7 @@ def main(config):
         eval_policy = functools.partial(agent, training=False)
         tools.simulate(eval_policy, eval_envs, episodes=config.eval_episode_num)
         if config.video_pred_log:
-            video_pred = agent._wm.video_pred(next(eval_dataset))
+            video_pred = agent._wm.video_pred(next(eval_dataset), self._config.batch_size)
             logger.video("eval_openl", to_np(video_pred))
         print("Start training.")
         state = tools.simulate(agent, train_envs, config.eval_every, state=state)
