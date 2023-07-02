@@ -161,7 +161,7 @@ def simulate(agent, envs, steps=0, episodes=0, state=None):
         done = np.stack(done)
         episode += int(done.sum())
         length += 1
-        step += (done * length).sum()
+        step += len(envs)
         length *= 1 - done
 
     return (step - steps, episode - episodes, done, length, obs, agent_state, reward)

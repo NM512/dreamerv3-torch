@@ -2,6 +2,7 @@
 *.sh
 logdir*
 vis_*
+result*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
