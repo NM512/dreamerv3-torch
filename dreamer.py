@@ -1,10 +1,8 @@
 import argparse
-import collections
 import functools
 import os
 import pathlib
 import sys
-import warnings
 
 os.environ["MUJOCO_GL"] = "egl"
 

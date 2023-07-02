@@ -3,7 +3,6 @@ import collections
 import io
 import json
 import pathlib
-import pickle
 import re
 import time
 import uuid
@@ -14,7 +13,6 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 from torch import distributions as torchd
-from torch.utils.data import Dataset
 from torch.utils.tensorboard import SummaryWriter
 
 
