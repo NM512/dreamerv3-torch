@@ -218,8 +218,11 @@ def make_env(config, logger, mode, train_eps, eval_eps):
         env = wrappers.OneHotAction(env)
     elif suite == "crafter":
         import envs.crafter as crafter
-
         env = crafter.Crafter(task, config.size)
+        env = wrappers.OneHotAction(env)
+    elif suite == "minecraft":
+        import envs.minecraft as minecraft
+        env = minecraft.make_env(task, size=config.size, break_speed=config.break_speed)
         env = wrappers.OneHotAction(env)
     else:
         raise NotImplementedError(suite)

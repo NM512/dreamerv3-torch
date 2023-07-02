@@ -172,6 +172,15 @@ atari100k:
   imag_gradient: 'reinforce'
   time_limit: 108000
 
+minecraft:
+  task: minecraft_diamond
+  break_speed: 100.0
+  envs: 16
+  train_ratio: 16
+  log_keys_max: '^log_inventory.*'
+  encoder: {mlp_keys: 'inventory|inventory_max|equipped|health|hunger|breath|reward', cnn_keys: 'image'}
+  decoder: {mlp_keys: 'inventory|inventory_max|equipped|health|hunger|breath', cnn_keys: 'image'}
+  time_limit: 36000
 
 debug:
   debug: True
