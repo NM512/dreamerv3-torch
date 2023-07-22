@@ -228,18 +228,6 @@ def make_env(config, logger, mode, train_eps, eval_eps):
     env = wrappers.TimeLimit(env, config.time_limit)
     env = wrappers.SelectAction(env, key="action")
     env = wrappers.UUID(env)
-    # if (mode == "train") or (mode == "eval"):
-    #     callbacks = [
-    #         functools.partial(
-    #             ProcessEpisodeWrap.process_episode,
-    #             config,
-    #             logger,
-    #             mode,
-    #             train_eps,
-    #             eval_eps,
-    #         )
-    #     ]
-    #     env = wrappers.CollectDataset(env, mode, train_eps, callbacks=callbacks)
     env = wrappers.RewardObs(env)
     return env
 
