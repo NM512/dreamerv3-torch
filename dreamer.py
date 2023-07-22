@@ -66,7 +66,7 @@ class Dreamer(nn.Module):
             plan2explore=lambda: expl.Plan2Explore(config, self._wm, reward),
         )[config.expl_behavior]().to(self._config.device)
 
-    def __call__(self, obs, reset, state=None, reward=None, training=True):
+    def __call__(self, obs, reset, state=None, training=True):
         step = self._step
         if self._should_reset(step):
             state = None
@@ -295,7 +295,7 @@ def main(config):
                 1,
             )
 
-        def random_agent(o, d, s, r):
+        def random_agent(o, d, s):
             action = random_actor.sample()
             logprob = random_actor.log_prob(action)
             return {"action": action, "logprob": logprob}, None

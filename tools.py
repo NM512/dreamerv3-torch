@@ -148,10 +148,9 @@ def simulate(agent, envs, cache, directory, logger, is_eval=False, limit=None, s
                 add_to_cache(cache, envs[i].id, t)
             for index, result in zip(indices, results):
                 obs[index] = result
-            reward = [reward[i] * (1 - done[i]) for i in range(len(envs))]
         # Step agents.
         obs = {k: np.stack([o[k] for o in obs]) for k in obs[0]}
-        action, agent_state = agent(obs, done, agent_state, reward)
+        action, agent_state = agent(obs, done, agent_state)
         if isinstance(action, dict):
             action = [
                 {k: np.array(action[k][i].detach().cpu()) for k in action}
