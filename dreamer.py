@@ -150,7 +150,6 @@ class Dreamer(nn.Module):
             return tools.OneHotDist(probs=probs).sample()
         else:
             return torch.clip(torchd.normal.Normal(action, amount).sample(), -1, 1)
-        raise NotImplementedError(self._config.action_noise)
 
     def _train(self, data):
         metrics = {}
@@ -181,7 +180,7 @@ def make_dataset(episodes, config):
     return dataset
 
 
-def make_env(config, logger, mode, train_eps, eval_eps):
+def make_env(config, mode):
     suite, task = config.task.split("_", 1)
     if suite == "dmc":
         import envs.dmc as dmc
@@ -260,7 +259,7 @@ def main(config):
     else:
         directory = config.evaldir
     eval_eps = tools.load_episodes(directory, limit=1)
-    make = lambda mode: make_env(config, logger, mode, train_eps, eval_eps)
+    make = lambda mode: make_env(config, mode)
     train_envs = [make("train") for _ in range(config.envs)]
     eval_envs = [make("eval") for _ in range(config.envs)]
     acts = train_envs[0].action_space
