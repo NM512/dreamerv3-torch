@@ -194,6 +194,7 @@ class Future:
             self._complete = True
         return self._result
 
+
 class Damy:
     def __init__(self, env):
         self._env = env
@@ -202,7 +203,7 @@ class Damy:
         return getattr(self._env, name)
 
     def step(self, action):
-        return lambda :self._env.step(action)
+        return lambda: self._env.step(action)
 
     def reset(self):
-        return lambda :self._env.reset()
+        return lambda: self._env.reset()

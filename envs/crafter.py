@@ -4,6 +4,7 @@ import numpy as np
 
 class Crafter:
     metadata = {}
+
     def __init__(self, task, size=(64, 64), seed=None):
         assert task in ("reward", "noreward")
         import crafter

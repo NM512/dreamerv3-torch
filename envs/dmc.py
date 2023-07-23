@@ -4,6 +4,7 @@ import numpy as np
 
 class DeepMindControl:
     metadata = {}
+
     def __init__(self, name, action_repeat=1, size=(64, 64), camera=None):
         domain, task = name.split("_", 1)
         if domain == "cup":  # Only domain with multiple words.

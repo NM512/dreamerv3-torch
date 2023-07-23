@@ -52,7 +52,6 @@ class OneHotAction(gym.Wrapper):
         super().__init__(env)
         self._random = np.random.RandomState()
 
-
     def action_space(self):
         shape = (self.env.action_space.n,)
         space = gym.spaces.Box(low=0, high=1, shape=shape, dtype=np.float32)
@@ -83,7 +82,6 @@ class RewardObs(gym.Wrapper):
     def __init__(self, env):
         super().__init__(env)
 
-
     def observation_space(self):
         spaces = self.env.observation_space.spaces
         if "reward" not in spaces:
@@ -110,16 +108,15 @@ class SelectAction(gym.Wrapper):
         super().__init__(env)
         self._key = key
 
-
     def step(self, action):
         return self.env.step(action[self._key])
+
 
 class UUID(gym.Wrapper):
     def __init__(self, env):
         super().__init__(env)
         timestamp = datetime.datetime.now().strftime("%Y%m%dT%H%M%S")
         self.id = f"{timestamp}-{str(uuid.uuid4().hex)}"
-
 
     def reset(self):
         timestamp = datetime.datetime.now().strftime("%Y%m%dT%H%M%S")
