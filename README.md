@@ -24,6 +24,7 @@ So far, the following benchmarks can be used for testing.
 | [DMC Vision](https://github.com/deepmind/dm_control) | Image | Continuous |1M| DeepMind Control Suite with high-dimensional images inputs. |
 | [Atari 100k](https://github.com/openai/atari-py) | Image | Discrete |400K| 26 Atari games. |
 | [Crafter](https://github.com/danijar/crafter) | Image | Discrete |1M| Survival environment to evaluates diverse agent abilities.|
+| [Minecraft](https://github.com/minerllabs/minerl) | Image |Discrete |100M| 3D mazes to evaluate RL agents' long-term memory.|
 | [Memory Maze](https://github.com/jurgisp/memory-maze) | Image |Discrete |100M| 3D mazes to evaluate RL agents' long-term memory.|
 
 ## Results
