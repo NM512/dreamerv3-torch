@@ -3,12 +3,14 @@ import numpy as np
 
 
 class Crafter:
+    metadata = {}
     def __init__(self, task, size=(64, 64), seed=None):
         assert task in ("reward", "noreward")
         import crafter
 
         self._env = crafter.Env(size=size, reward=(task == "reward"), seed=seed)
         self._achievements = crafter.constants.achievements.copy()
+        self.reward_range = [-np.inf, np.inf]
 
     @property
     def observation_space(self):

@@ -4,7 +4,7 @@ import numpy as np
 
 class Atari:
     LOCK = None
-
+    metadata = {}
     def __init__(
         self,
         name,
@@ -64,6 +64,7 @@ class Atari:
         self._last_lives = None
         self._done = True
         self._step = 0
+        self.reward_range = [-np.inf, np.inf]
 
     @property
     def observation_space(self):
