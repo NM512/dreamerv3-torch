@@ -4,7 +4,7 @@ import os
 import pathlib
 import sys
 
-os.environ["MUJOCO_GL"] = "egl"
+os.environ["MUJOCO_GL"] = "osmesa"
 
 import numpy as np
 import ruamel.yaml as yaml
@@ -15,6 +15,7 @@ import exploration as expl
 import models
 import tools
 import envs.wrappers as wrappers
+from parallel import Parallel, Damy
 
 import torch
 from torch import nn
@@ -262,6 +263,12 @@ def main(config):
     make = lambda mode: make_env(config, mode)
     train_envs = [make("train") for _ in range(config.envs)]
     eval_envs = [make("eval") for _ in range(config.envs)]
+    if config.envs > 1:
+        train_envs = [Parallel(env, "process") for env in train_envs]
+        eval_envs = [Parallel(env, "process") for env in eval_envs]
+    else:
+        train_envs = [Damy(env) for env in train_envs]
+        eval_envs = [Damy(env) for env in eval_envs]
     acts = train_envs[0].action_space
     config.num_actions = acts.n if hasattr(acts, "n") else acts.shape[0]
 

@@ -83,7 +83,6 @@ class MinecraftBase(gym.Env):
 
   def step(self, action):
     action = action.copy()
-    print(self._step, action)
     action = self._action_values[action]
     action = self._action(action)
     following = self._noop_action.copy()

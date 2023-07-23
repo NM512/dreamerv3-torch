@@ -138,6 +138,7 @@ def simulate(agent, envs, cache, directory, logger, is_eval=False, limit=None, s
         if done.any():
             indices = [index for index, d in enumerate(done) if d]
             results = [envs[i].reset() for i in indices]
+            results = [r() for r in results]
             for i in indices:
                 t = results[i].copy()
                 t = {k: convert(v) for k, v in t.items()}
@@ -161,6 +162,7 @@ def simulate(agent, envs, cache, directory, logger, is_eval=False, limit=None, s
         assert len(action) == len(envs)
         # step envs
         results = [e.step(a) for e, a in zip(envs, action)]
+        results = [r() for r in results]
         obs, reward, done = zip(*[p[:3] for p in results])
         obs = list(obs)
         reward = list(reward)
