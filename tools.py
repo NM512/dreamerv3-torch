@@ -150,15 +150,15 @@ def simulate(
             indices = [index for index, d in enumerate(done) if d]
             results = [envs[i].reset() for i in indices]
             results = [r() for r in results]
-            for i in indices:
-                t = results[i].copy()
+            for index, result in zip(indices, results):
+                t = result.copy()
                 t = {k: convert(v) for k, v in t.items()}
                 # action will be added to transition in add_to_cache
                 t["reward"] = 0.0
                 t["discount"] = 1.0
                 # initial state should be added to cache
-                add_to_cache(cache, envs[i].id, t)
-            for index, result in zip(indices, results):
+                add_to_cache(cache, envs[index].id, t)
+                # replace obs with done by initial state
                 obs[index] = result
         # step agents
         obs = {k: np.stack([o[k] for o in obs]) for k in obs[0]}
