@@ -177,6 +177,9 @@ minecraft:
   task: minecraft_diamond
   step: 1e8
   envs: 16
+  # no eval
+  eval_episode_num: 0
+  eval_every: 1e8
   action_repeat: 1
   train_ratio: 16
   video_pred_log: true
