@@ -266,7 +266,7 @@ def main(config):
     make = lambda mode: make_env(config, mode)
     train_envs = [make("train") for _ in range(config.envs)]
     eval_envs = [make("eval") for _ in range(config.envs)]
-    if config.envs > 1:
+    if config.parallel:
         train_envs = [Parallel(env, "process") for env in train_envs]
         eval_envs = [Parallel(env, "process") for env in eval_envs]
     else:

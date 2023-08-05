@@ -7,6 +7,7 @@ defaults:
   offline_evaldir: ''
   seed: 0
   steps: 1e6
+  parallel: False
   eval_every: 1e4
   eval_episode_num: 10
   log_every: 1e4
@@ -176,6 +177,7 @@ atari100k:
 minecraft:
   task: minecraft_diamond
   step: 1e8
+  parallel: True
   envs: 16
   # no eval
   eval_episode_num: 0
