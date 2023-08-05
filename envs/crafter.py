@@ -19,7 +19,6 @@ class Crafter:
             "image": gym.spaces.Box(
                 0, 255, self._env.observation_space.shape, dtype=np.uint8
             ),
-            "reward": gym.spaces.Box(-np.inf, np.inf, (1,), dtype=np.float32),
             "is_first": gym.spaces.Box(-np.inf, np.inf, (1,), dtype=np.uint8),
             "is_last": gym.spaces.Box(-np.inf, np.inf, (1,), dtype=np.uint8),
             "is_terminal": gym.spaces.Box(-np.inf, np.inf, (1,), dtype=np.uint8),
@@ -50,7 +49,6 @@ class Crafter:
         }
         obs = {
             "image": image,
-            "reward": reward,
             "is_first": False,
             "is_last": done,
             "is_terminal": info["discount"] == 0,

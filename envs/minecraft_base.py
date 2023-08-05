@@ -18,7 +18,7 @@ class MinecraftBase(gym.Env):
         sticky_attack=30,
         sticky_jump=10,
         pitch_limit=(-60, 60),
-        logs=True,
+        logs=False,
     ):
         if logs:
             logging.basicConfig(level=logging.DEBUG)
@@ -41,7 +41,6 @@ class MinecraftBase(gym.Env):
             if k.startswith("inventory/")
             if k != "inventory/log2"
         ]
-        self._step = 0
         self._max_inventory = None
         self._equip_enum = self._env.observation_space["equipped_items"]["mainhand"][
             "type"
@@ -75,7 +74,6 @@ class MinecraftBase(gym.Env):
                 "equipped": gym.spaces.Box(
                     -np.inf, np.inf, (len(self._equip_enum),), dtype=np.float32
                 ),
-                "reward": gym.spaces.Box(-np.inf, np.inf, (1,), dtype=np.float32),
                 "health": gym.spaces.Box(-np.inf, np.inf, (1,), dtype=np.float32),
                 "hunger": gym.spaces.Box(-np.inf, np.inf, (1,), dtype=np.float32),
                 "breath": gym.spaces.Box(-np.inf, np.inf, (1,), dtype=np.float32),
@@ -110,12 +108,11 @@ class MinecraftBase(gym.Env):
             if "error" in info:
                 done = True
                 break
-            obs["is_first"] = False
-            obs["is_last"] = bool(done)
-            obs["is_terminal"] = bool(info.get("is_terminal", done))
+        obs["is_first"] = False
+        obs["is_last"] = bool(done)
+        obs["is_terminal"] = bool(info.get("is_terminal", done))
 
         obs = self._obs(obs)
-        self._step += 1
         assert "pov" not in obs, list(obs.keys())
         return obs, reward, done, info
 
@@ -135,7 +132,6 @@ class MinecraftBase(gym.Env):
         obs["is_terminal"] = False
         obs = self._obs(obs)
 
-        self._step = 0
         self._sticky_attack_counter = 0
         self._sticky_jump_counter = 0
         self._pitch = 0
@@ -166,7 +162,6 @@ class MinecraftBase(gym.Env):
             "health": np.float32([obs["life_stats/life"]]) / 20,
             "hunger": np.float32([obs["life_stats/food"]]) / 20,
             "breath": np.float32([obs["life_stats/air"]]) / 300,
-            "reward": [0.0],
             "is_first": obs["is_first"],
             "is_last": obs["is_last"],
             "is_terminal": obs["is_terminal"],

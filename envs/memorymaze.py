@@ -35,7 +35,6 @@ class MemoryMaze:
         return gym.spaces.Dict(
             {
                 **spaces,
-                "reward": gym.spaces.Box(-np.inf, np.inf, (), dtype=np.float32),
                 "is_first": gym.spaces.Box(0, 1, (), dtype=bool),
                 "is_last": gym.spaces.Box(0, 1, (), dtype=bool),
                 "is_terminal": gym.spaces.Box(0, 1, (), dtype=bool),
@@ -52,7 +51,6 @@ class MemoryMaze:
         obs, reward, done, info = self._env.step(action)
         if not self._obs_is_dict:
             obs = {self._obs_key: obs}
-        obs["reward"] = reward
         obs["is_first"] = False
         obs["is_last"] = done
         obs["is_terminal"] = info.get("is_terminal", False)
@@ -62,7 +60,6 @@ class MemoryMaze:
         obs = self._env.reset()
         if not self._obs_is_dict:
             obs = {self._obs_key: obs}
-        obs["reward"] = 0.0
         obs["is_first"] = True
         obs["is_last"] = False
         obs["is_terminal"] = False
