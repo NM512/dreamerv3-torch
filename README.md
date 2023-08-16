@@ -36,8 +36,7 @@ So far, the following benchmarks can be used for testing.
 ![atari100k](https://github.com/NM512/dreamerv3-torch/assets/70328564/0da6d899-d91d-44b4-a8c4-d5b37413aa11)
 
 #### Crafter
-<img src="https://github.com/NM512/dreamerv3-torch/assets/70328564/2a4d65d3-7e7b-4a95-b0cf-146d978054f0" width="300" height="150" />
-
+<img src="https://github.com/NM512/dreamerv3-torch/assets/70328564/a0626038-53f6-4300-a622-7ac257f4c290" width="300" height="150" />
 
 ## Acknowledgments
 This code is heavily inspired by the following works:

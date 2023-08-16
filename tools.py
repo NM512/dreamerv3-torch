@@ -84,7 +84,10 @@ class Logger:
         with (self._logdir / "metrics.jsonl").open("a") as f:
             f.write(json.dumps({"step": step, **dict(scalars)}) + "\n")
         for name, value in scalars:
-            self._writer.add_scalar("scalars/" + name, value, step)
+            if "/" not in name:
+                self._writer.add_scalar("scalars/" + name, value, step)
+            else:
+                self._writer.add_scalar(name, value, step)
         for name, value in self._images.items():
             self._writer.add_image(name, value, step)
         for name, value in self._videos.items():
@@ -203,6 +206,15 @@ def simulate(
                 length = len(cache[envs[i].id]["reward"]) - 1
                 score = float(np.array(cache[envs[i].id]["reward"]).sum())
                 video = cache[envs[i].id]["image"]
+                # record logs given from environments
+                for key in list(cache[envs[i].id].keys()):
+                    if "log_" in key:
+                        logger.scalar(
+                            key, float(np.array(cache[envs[i].id][key]).sum())
+                        )
+                        # log items won't be used later
+                        cache[envs[i].id].pop(key)
+
                 if not is_eval:
                     step_in_dataset = erase_over_episodes(cache, limit)
                     logger.scalar(f"dataset_size", step_in_dataset)
