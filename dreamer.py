@@ -216,7 +216,7 @@ def make_env(config, mode):
             seed=config.seed,
         )
         env = wrappers.OneHotAction(env)
-    elif suite == "MemoryMaze":
+    elif suite == "memorymaze":
         from envs.memorymaze import MemoryMaze
 
         env = MemoryMaze(task, seed=config.seed)

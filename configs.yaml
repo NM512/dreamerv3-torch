@@ -200,20 +200,16 @@ minecraft:
   break_speed: 100.0
   time_limit: 36000
 
+memorymaze:
+  steps: 1e8
+  action_repeat: 2
+  actor_dist: 'onehot'
+  imag_gradient: 'reinforce'
+  task: 'memorymaze_9x9'
+
 debug:
   debug: True
   pretrain: 1
   prefill: 1
   batch_size: 10
   batch_length: 20
-
-MemoryMaze:
-  steps: 1e8
-  action_repeat: 2
-  actor_dist: 'onehot'
-  imag_gradient: 'reinforce'
-  task: 'MemoryMaze_9x9'
-
-
-
-
