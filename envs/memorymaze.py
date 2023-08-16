@@ -5,11 +5,11 @@ import numpy as np
 
 
 class MemoryMaze:
-    def __init__(self, task, obs_key="image", act_key="action", size=(64, 64)):
+    def __init__(self, task, obs_key="image", act_key="action", size=(64, 64), seed=0):
         if task == "9x9":
-            self._env = gym.make("memory_maze:MemoryMaze-9x9-v0")
+            self._env = gym.make("memory_maze:MemoryMaze-9x9-v0", seed=seed)
         elif task == "15x15":
-            self._env = gym.make("memory_maze:MemoryMaze-15x15-v0")
+            self._env = gym.make("memory_maze:MemoryMaze-15x15-v0", seed=seed)
         else:
             raise NotImplementedError(task)
         self._obs_is_dict = hasattr(self._env.observation_space, "spaces")

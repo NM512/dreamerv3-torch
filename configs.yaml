@@ -6,6 +6,7 @@ defaults:
   offline_traindir: ''
   offline_evaldir: ''
   seed: 0
+  deterministic_run: False
   steps: 1e6
   parallel: False
   eval_every: 1e4
