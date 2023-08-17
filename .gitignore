@@ -1,5 +1,5 @@
 #
-*.sh
+run*
 logdir*
 vis_*
 result*
