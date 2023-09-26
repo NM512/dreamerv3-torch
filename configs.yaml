@@ -59,9 +59,9 @@ defaults:
     {mlp_keys: '$^', cnn_keys: 'image', act: 'SiLU', norm: 'LayerNorm', cnn_depth: 32, kernel_size: 4, minres: 4, mlp_layers: 2, mlp_units: 512, cnn_sigmoid: False, image_dist: mse, vector_dist: symlog_mse}
   value_head: 'symlog_disc'
   reward_head: 'symlog_disc'
-  dyn_scale: '0.5'
-  rep_scale: '0.1'
-  kl_free: '1.0'
+  dyn_scale: 0.5
+  rep_scale: 0.1
+  kl_free: 1.0
   cont_scale: 1.0
   reward_scale: 1.0
   weight_decay: 0.0
@@ -93,10 +93,10 @@ defaults:
   discount_lambda: 0.95
   imag_horizon: 15
   imag_gradient: 'dynamics'
-  imag_gradient_mix: '0.0'
+  imag_gradient_mix: 0.0
   imag_sample: True
   actor_dist: 'normal'
-  actor_entropy: '3e-4'
+  actor_entropy: 3e-4
   actor_state_entropy: 0.0
   actor_init_std: 1.0
   actor_min_std: 0.1

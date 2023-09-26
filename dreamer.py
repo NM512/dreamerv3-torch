@@ -40,16 +40,6 @@ class Dreamer(nn.Module):
         # this is update step
         self._step = logger.step // config.action_repeat
         self._update_count = 0
-        # Schedules.
-        config.actor_entropy = lambda x=config.actor_entropy: tools.schedule(
-            x, self._step
-        )
-        config.actor_state_entropy = (
-            lambda x=config.actor_state_entropy: tools.schedule(x, self._step)
-        )
-        config.imag_gradient_mix = lambda x=config.imag_gradient_mix: tools.schedule(
-            x, self._step
-        )
         self._dataset = dataset
         self._wm = models.WorldModel(obs_space, act_space, self._step, config)
         self._task_behavior = models.ImagBehavior(
