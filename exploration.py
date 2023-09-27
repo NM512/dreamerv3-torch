@@ -70,7 +70,7 @@ class Plan2Explore(nn.Module):
             [networks.MLP(**kw) for _ in range(config.disag_models)]
         )
         kw = dict(wd=config.weight_decay, opt=config.opt, use_amp=self._use_amp)
-        self._model_opt = tools.Optimizer(
+        self._expl_opt = tools.Optimizer(
             "explorer",
             self.parameters(),
             config.model_lr,
@@ -129,5 +129,5 @@ class Plan2Explore(nn.Module):
                 [torch.mean(pred.log_prob(targets))[None] for pred in preds], 0
             )
             loss = -torch.mean(likes)
-        metrics = self._model_opt(loss, self.parameters())
+        metrics = self._expl_opt(loss, self.parameters())
         return metrics
