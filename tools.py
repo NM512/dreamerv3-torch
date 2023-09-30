@@ -164,7 +164,7 @@ def simulate(
                 # replace obs with done by initial state
                 obs[index] = result
         # step agents
-        obs = {k: np.stack([o[k] for o in obs]) for k in obs[0]}
+        obs = {k: np.stack([o[k] for o in obs]) for k in obs[0] if "log_" not in k}
         action, agent_state = agent(obs, done, agent_state)
         if isinstance(action, dict):
             action = [
