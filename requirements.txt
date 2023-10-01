@@ -1,7 +1,6 @@
 setuptools==60.0.0
 torch==2.0.0
 torchvision==0.15.1
-tensorboard==2.10.0
 pandas==1.2.4
 matplotlib==3.5.0
 ruamel.yaml==0.17.4
@@ -16,6 +15,7 @@ atari-py==0.2.9
 crafter==1.8.0
 opencv-python==4.7.0.72
 numpy==1.21.0
+tensorboard
 # minerl==0.4.4
 # This was needed for minerl
 # conda install -c conda-forge openjdk=8

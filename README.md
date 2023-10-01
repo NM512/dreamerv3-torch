@@ -3,7 +3,9 @@ Pytorch implementation of [Mastering Diverse Domains through World Models](https
 
 ## Instructions
 
-Get dependencies:
+### Method 1: Manual
+
+Get dependencies with python 3.9:
 ```
 pip install -r requirements.txt
 ```
@@ -15,6 +17,9 @@ Monitor results:
 ```
 tensorboard --logdir ./logdir
 ```
+### Method 2: Docker
+
+Please refer to the Dockerfile for the instructions, as they are included within.
 
 ## Benchmarks
 So far, the following benchmarks can be used for testing.

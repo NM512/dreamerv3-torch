@@ -6,10 +6,10 @@
 #
 # 2. Start training:
 # docker build -f  Dockerfile -t img . && \
-# docker run -it --rm --gpus all -v $PWD:/workspace img \
+# docker run -it --rm --gpus all -v $PWD:/workspace -u $(id -u):$(id -g) img \
 #   sh xvfb_run.sh python3 dreamer.py \
-#   --logdir "./logdir/dmc_walker_walk" \
-#   --configs dmc_vision --task dmc_walker_walk
+#   --configs dmc_vision --task dmc_walker_walk \
+#   --logdir "./logdir/dmc_walker_walk"
 #
 # 3. See results:
 # tensorboard --logdir ~/logdir
@@ -34,11 +34,11 @@ ENV NUMBA_CACHE_DIR=/tmp
 # dmc setup
 RUN pip3 install tensorboard
 RUN pip3 install gym==0.19.0
-RUN pip3 install dm_control
+RUN pip3 install dm_control==1.0.9
 RUN pip3 install moviepy
 
 # crafter setup
-RUN pip3 install crafter
+RUN pip3 install crafter==1.8.0
 
 # atari setup
 RUN pip3 install atari-py==0.2.9
