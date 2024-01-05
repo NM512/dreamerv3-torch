@@ -239,9 +239,10 @@ class ImagBehavior(nn.Module):
             "learned",
             config.actor["min_std"],
             config.actor["max_std"],
-            config.actor["temp"],
+            absmax=1.0,
+            temp=config.actor["temp"],
             unimix_ratio=config.actor["unimix_ratio"],
-            outscale=1.0,
+            outscale=config.actor["outscale"],
             name="Actor",
         )
         self.value = networks.MLP(
