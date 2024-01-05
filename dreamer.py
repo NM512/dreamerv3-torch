@@ -110,7 +110,7 @@ class Dreamer(nn.Module):
         logprob = actor.log_prob(action)
         latent = {k: v.detach() for k, v in latent.items()}
         action = action.detach()
-        if self._config.actor_dist == "onehot_gumble":
+        if self._config.actor["dist"] == "onehot_gumble":
             action = torch.one_hot(
                 torch.argmax(action, dim=-1), self._config.num_actions
             )
@@ -123,7 +123,7 @@ class Dreamer(nn.Module):
         amount = self._config.expl_amount if training else self._config.eval_noise
         if amount == 0:
             return action
-        if "onehot" in self._config.actor_dist:
+        if "onehot" in self._config.actor["dist"]:
             probs = amount / self._config.num_actions + (1 - amount) * action
             return tools.OneHotDist(probs=probs).sample()
         else:
