@@ -17,7 +17,6 @@ defaults:
   compile: True
   precision: 32
   debug: False
-  expl_gifs: False
   video_pred_log: True
 
   # Environment
@@ -28,27 +27,21 @@ defaults:
   time_limit: 1000
   grayscale: False
   prefill: 2500
-  eval_noise: 0.0
   reward_EMA: True
 
   # Model
-  dyn_cell: 'gru_layer_norm'
   dyn_hidden: 512
   dyn_deter: 512
   dyn_stoch: 32
   dyn_discrete: 32
-  dyn_input_layers: 1
-  dyn_output_layers: 1
   dyn_rec_depth: 1
-  dyn_shared: False
   dyn_mean_act: 'none'
   dyn_std_act: 'sigmoid2'
   dyn_min_std: 0.1
-  dyn_temp_post: True
   grad_heads: ['decoder', 'reward', 'cont']
   units: 512
   act: 'SiLU'
-  norm: 'LayerNorm'
+  norm: True
   encoder:
     {mlp_keys: '$^', cnn_keys: 'image', act: 'SiLU', norm: True, cnn_depth: 32, kernel_size: 4, minres: 4, mlp_layers: 2, mlp_units: 512, symlog_inputs: True}
   decoder:
@@ -58,9 +51,9 @@ defaults:
   critic:
     {layers: 2, dist: 'symlog_disc', slow_target: True, slow_target_update: 1, slow_target_fraction: 0.02, lr: 3e-5, eps: 1e-5, grad_clip: 100.0, outscale: 0.0}
   reward_head:
-    {layers: 2, dist: 'symlog_disc', scale: 1.0, outscale: 0.0}
+    {layers: 2, dist: 'symlog_disc', loss_scale: 1.0, outscale: 0.0}
   cont_head:
-    {layers: 2, scale: 1.0, outscale: 1.0}
+    {layers: 2, loss_scale: 1.0, outscale: 1.0}
   dyn_scale: 0.5
   rep_scale: 0.1
   kl_free: 1.0
@@ -85,12 +78,7 @@ defaults:
   imag_horizon: 15
   imag_gradient: 'dynamics'
   imag_gradient_mix: 0.0
-  imag_sample: True
-  expl_amount: 0
   eval_state_mean: False
-  collect_dyn_sample: True
-  behavior_stop_grad: True
-  future_entropy: False
 
   # Exploration
   expl_behavior: 'greedy'

@@ -840,37 +840,6 @@ def static_scan(fn, inputs, start):
     return outputs
 
 
-# Original version
-# def static_scan2(fn, inputs, start, reverse=False):
-#  last = start
-#  outputs = [[] for _ in range(len([start] if type(start)==type({}) else start))]
-#  indices = range(inputs[0].shape[0])
-#  if reverse:
-#    indices = reversed(indices)
-#  for index in indices:
-#    inp = lambda x: (_input[x] for _input in inputs)
-#    last = fn(last, *inp(index))
-#    [o.append(l) for o, l in zip(outputs, [last] if type(last)==type({}) else last)]
-#  if reverse:
-#    outputs = [list(reversed(x)) for x in outputs]
-#  res = [[]] * len(outputs)
-#  for i in range(len(outputs)):
-#    if type(outputs[i][0]) == type({}):
-#      _res = {}
-#      for key in outputs[i][0].keys():
-#        _res[key] = []
-#        for j in range(len(outputs[i])):
-#          _res[key].append(outputs[i][j][key])
-#        #_res[key] = torch.stack(_res[key], 0)
-#        _res[key] = faster_stack(_res[key], 0)
-#    else:
-#      _res = outputs[i]
-#      #_res = torch.stack(_res, 0)
-#      _res = faster_stack(_res, 0)
-#    res[i] = _res
-#  return res
-
-
 class Every:
     def __init__(self, every):
         self._every = every
