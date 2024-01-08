@@ -34,6 +34,7 @@ ENV NUMBA_CACHE_DIR=/tmp
 # dmc setup
 RUN pip3 install tensorboard
 RUN pip3 install gym==0.19.0
+RUN pip3 install mujoco==2.3.5
 RUN pip3 install dm_control==1.0.9
 RUN pip3 install moviepy
 
