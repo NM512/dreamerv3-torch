@@ -228,7 +228,7 @@ class ImagBehavior(nn.Module):
             config.act,
             config.norm,
             config.actor["dist"],
-            "learned",
+            config.actor["std"],
             config.actor["min_std"],
             config.actor["max_std"],
             absmax=1.0,
