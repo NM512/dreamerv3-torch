@@ -145,7 +145,6 @@ class RSSM(nn.Module):
     def imagine_with_action(self, action, state):
         swap = lambda x: x.permute([1, 0] + list(range(2, len(x.shape))))
         assert isinstance(state, dict), state
-        action = action
         action = swap(action)
         prior = tools.static_scan(self.img_step, [action], state)
         prior = prior[0]
