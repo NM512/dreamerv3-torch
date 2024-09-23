@@ -38,7 +38,7 @@ So far, the following benchmarks can be used for testing.
 #### DMC Vision
 ![dmcvision](imgs/dmcvision.png)
 #### Atari 100k
-![atari100k](https://github.com/NM512/dreamerv3-torch/assets/70328564/0da6d899-d91d-44b4-a8c4-d5b37413aa11)
+![atari100k](imgs/atari100k.png)
 
 #### Crafter
 <img src="https://github.com/NM512/dreamerv3-torch/assets/70328564/a0626038-53f6-4300-a622-7ac257f4c290" width="300" height="150" />
