@@ -77,9 +77,9 @@ class MinecraftBase(gym.Env):
                 "health": gym.spaces.Box(-np.inf, np.inf, (1,), dtype=np.float32),
                 "hunger": gym.spaces.Box(-np.inf, np.inf, (1,), dtype=np.float32),
                 "breath": gym.spaces.Box(-np.inf, np.inf, (1,), dtype=np.float32),
-                "is_first": gym.spaces.Box(-np.inf, np.inf, (1,), dtype=np.uint8),
-                "is_last": gym.spaces.Box(-np.inf, np.inf, (1,), dtype=np.uint8),
-                "is_terminal": gym.spaces.Box(-np.inf, np.inf, (1,), dtype=np.uint8),
+                "is_first": gym.spaces.Box(0, 1, (1,), dtype=np.uint8),
+                "is_last": gym.spaces.Box(0, 1, (1,), dtype=np.uint8),
+                "is_terminal": gym.spaces.Box(0, 1, (1,), dtype=np.uint8),
                 **{
                     f"log_{k}": gym.spaces.Box(-np.inf, np.inf, (1,), dtype=np.int64)
                     for k in self._inv_keys
