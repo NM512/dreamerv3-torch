@@ -342,11 +342,11 @@ def main(config):
 if __name__ == "__main__":
     
     #temporary
-    sys.argv.extend([
-        "--configs", "atari100k",
-        "--task", "atari_pong",
-        "--logdir", "./logdir/atari"
-    ])
+    #sys.argv.extend([
+    #    "--configs", "atari100k",
+    #    "--task", "atari_pong",
+    #    "--logdir", "./logdir/atari"
+    #])
     parser = argparse.ArgumentParser()
     parser.add_argument("--configs", nargs="+")
     args, remaining = parser.parse_known_args()
