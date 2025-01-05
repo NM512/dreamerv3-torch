@@ -1,5 +1,5 @@
 import datetime
-import gym
+import gymnasium as gym
 import numpy as np
 import uuid
 
@@ -21,9 +21,9 @@ class TimeLimit(gym.Wrapper):
             self._step = None
         return obs, reward, done, info
 
-    def reset(self):
+    def reset(self, **kwargs):
         self._step = 0
-        return self.env.reset()
+        return self.env.reset(**kwargs)
 
 
 class NormalizeActions(gym.Wrapper):
@@ -47,7 +47,9 @@ class NormalizeActions(gym.Wrapper):
 class OneHotAction(gym.Wrapper):
     def __init__(self, env):
         assert isinstance(env.action_space, gym.spaces.Discrete)
-        super().__init__(env)
+        #super().__init__(env)
+        super().__init__(env._env) #internal import
+        self.myenv = env
         self._random = np.random.RandomState()
         shape = (self.env.action_space.n,)
         space = gym.spaces.Box(low=0, high=1, shape=shape, dtype=np.float32)
@@ -60,18 +62,28 @@ class OneHotAction(gym.Wrapper):
         reference[index] = 1
         if not np.allclose(reference, action):
             raise ValueError(f"Invalid one-hot action:\n{action}")
-        return self.env.step(index)
+        return self.myenv.step(index)
 
-    def reset(self):
-        return self.env.reset()
+    def reset(self, **kwargs):
+        return self.myenv.reset()
 
     def _sample_action(self):
-        actions = self.env.action_space.n
+        actions = self.myenv.action_space.n
         index = self._random.randint(0, actions)
         reference = np.zeros(actions, dtype=np.float32)
         reference[index] = 1.0
         return reference
-
+    @property
+    def observation_space(self):        
+        return self.myenv.observation_space
+    
+    def _obs(self, reward, is_first=False, is_last=False, is_terminal=False):    
+        return self.myenv._obs(reward, is_first, is_last, is_terminal)
+    def _screen(self, array):
+        return self.myenv._screen(array)    
+    
+    def close(self):
+        return self.myenv.close()    
 
 class RewardObs(gym.Wrapper):
     def __init__(self, env):
@@ -111,7 +123,7 @@ class UUID(gym.Wrapper):
         timestamp = datetime.datetime.now().strftime("%Y%m%dT%H%M%S")
         self.id = f"{timestamp}-{str(uuid.uuid4().hex)}"
 
-    def reset(self):
+    def reset(self, **kwargs):
         timestamp = datetime.datetime.now().strftime("%Y%m%dT%H%M%S")
         self.id = f"{timestamp}-{str(uuid.uuid4().hex)}"
-        return self.env.reset()
+        return self.env.reset(**kwargs)

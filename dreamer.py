@@ -153,7 +153,7 @@ def make_env(config, mode, id):
         )
         env = wrappers.NormalizeActions(env)
     elif suite == "atari":
-        import envs.atari as atari
+        from envs import atari
 
         env = atari.Atari(
             task,
@@ -340,6 +340,13 @@ def main(config):
 
 
 if __name__ == "__main__":
+    
+    #temporary
+    sys.argv.extend([
+        "--configs", "atari100k",
+        "--task", "atari_pong",
+        "--logdir", "./logdir/atari"
+    ])
     parser = argparse.ArgumentParser()
     parser.add_argument("--configs", nargs="+")
     args, remaining = parser.parse_known_args()
