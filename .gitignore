@@ -136,4 +136,6 @@ dmypy.json
 
 # VScode
 .vscode/*
+
+# Project specific
 log*
