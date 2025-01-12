@@ -118,18 +118,42 @@ class Atari:
         )
 
     def reset(self):
+        """Reset the Atari environment to its initial state and return the first observation.
+        
+        This function:
+        1. Resets the environment to its starting state
+        2. Performs random NOOP actions to introduce initial state variation
+        3. Initializes lives tracking for games with lives
+        4. Captures the initial screen state
+        5. Resets internal state variables
+        6. Returns the initial observation
+        """
+        # Reset the environment to its starting state
         self._env.reset()
+        
+        # Perform random number of NOOP (No Operation) actions if configured
+        # NOOP means performing no action for a frame (action 0 in Atari)
+        # This helps introduce randomness in the initial state by starting
+        # the game at different points in the initial animation sequence
         if self._noops:
             for _ in range(self._random.randint(self._noops)):
-                _, _, dead, _ = self._env.step(0)
+                _, _, dead, _ = self._env.step(0)  # 0 is the NOOP action
                 if dead:
                     self._env.reset()
+        
+        # Initialize lives tracking for games with lives
         self._last_lives = self._ale.lives()
+        
+        # Capture the initial screen state into buffer
         self._screen(self._buffer[0])
+        # Clear the second buffer
         self._buffer[1].fill(0)
 
-        self._done = False
-        self._step = 0
+        # Reset internal state tracking variables
+        self._done = False  # Mark environment as active
+        self._step = 0      # Reset step counter
+
+        # Get and return the initial observation
         obs, reward, is_terminal, _ = self._obs(0.0, is_first=True)
         return obs
 
