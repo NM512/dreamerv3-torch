@@ -53,7 +53,7 @@ class Atari:
         with self.LOCK:
             self._env = gym.envs.atari.AtariEnv(
                 game=name,
-                obs_type="image",
+                obs_type="rgb",
                 frameskip=1,
                 repeat_action_probability=0.25 if sticky else 0.0,
                 full_action_space=(actions == "all"),
@@ -157,7 +157,7 @@ class Atari:
         )
 
     def _screen(self, array):
-        self._ale.getScreenRGB2(array)
+        self._ale.getScreenRGB(array)
 
     def close(self):
         return self._env.close()

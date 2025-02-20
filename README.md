@@ -5,7 +5,7 @@ Pytorch implementation of [Mastering Diverse Domains through World Models](https
 
 ### Method 1: Manual
 
-Get dependencies with python 3.11:
+Get dependencies with python 3.10:
 ```
 pip install -r requirements.txt
 ```
@@ -17,7 +17,7 @@ Monitor results:
 ```
 tensorboard --logdir ./logdir
 ```
-To set up Atari or Minecraft environments, please check the scripts located in [env/setup_scripts](https://github.com/NM512/dreamerv3-torch/tree/main/envs/setup_scripts).
+To set up Minecraft environments, please check the scripts located in [env/setup_scripts](https://github.com/NM512/dreamerv3-torch/tree/main/envs/setup_scripts).
 
 ### Method 2: Docker
 
