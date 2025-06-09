@@ -16,6 +16,67 @@ The DreamerV3 agent is primarily composed of three interconnected parts:
             *   **Rewards**: Predicts the immediate reward the agent would receive in that state.
     *   **Benefit**: By learning to predict these outcomes, the world model allows the agent to generate hypothetical trajectories ("dreams") without needing to constantly interact with the real, often slower, environment.
 
+    #### Detailed World Model Architecture and Training
+
+    The World Model is itself a sophisticated assembly of neural networks. Here's a deeper look:
+
+    **A. Sub-Components:**
+
+    1.  **Encoder (`networks.MultiEncoder`)**:
+        *   **Role**: To process raw observations (e.g., images, vector data) from the environment and compress them into a compact numerical representation called an "embedding."
+        *   **Structure**: It can contain convolutional neural networks (CNNs, implemented in `networks.ConvEncoder`) for image data and multi-layer perceptrons (MLPs, implemented in `networks.MLP`) for vector data. It processes and combines these different types of inputs into a single embedding vector.
+
+    2.  **RSSM (Recurrent State-Space Model - `networks.RSSM`)**: This is the core predictive engine of the World Model. It maintains and updates a belief about the state of the environment over time. The state consists of two parts:
+        *   **Deterministic State (`deter`)**: A hidden state of a Gated Recurrent Unit (GRU, implemented in `networks.GRUCell`). This part captures temporal information and evolves deterministically based on the previous deterministic state and the previous stochastic state & action.
+        *   **Stochastic State (`stoch`)**: A latent variable (can be continuous with a Normal distribution or discrete with a Categorical distribution). This part captures the uncertainty and variability in the environment that cannot be perfectly predicted.
+        *   **Key Internal Layers/Operations**:
+            *   `_img_in_layers` (MLP): Processes the previous stochastic state and action to prepare input for the GRU cell for state transition.
+            *   `_cell` (GRU): The recurrent core that updates the deterministic state.
+            *   `_img_out_layers` (MLP): Processes the new deterministic state (from GRU output) to help form the *prior* stochastic state prediction.
+            *   `_obs_out_layers` (MLP): Processes the new deterministic state and the current observation's embedding to help form the *posterior* stochastic state.
+            *   `_imgs_stat_layer` & `_obs_stat_layer` (Linear): Output the parameters (mean/std or logits) for the prior and posterior stochastic state distributions, respectively.
+
+    3.  **Prediction Heads (`self.heads` in `WorldModel`, using `networks.MultiDecoder` and `networks.MLP`)**: These are neural networks that take features from the RSSM's state and make predictions about various aspects of the environment:
+        *   **Decoder (`networks.MultiDecoder`)**: Reconstructs the original observation (e.g., image) from the RSSM state features. If it's an image, it uses a `networks.ConvDecoder` (transposed convolutions). For vector data, it uses an MLP.
+        *   **Reward Head (`networks.MLP`)**: Predicts the immediate reward from the RSSM state features.
+        *   **Continue Head (`networks.MLP`)**: Predicts a "continue" flag (1 if the episode is ongoing, 0 if terminated) or a discount factor, also from RSSM state features. This helps the agent learn about episode termination.
+
+    **B. Interconnections and Data Flow (During Training & Inference):**
+
+    1.  An observation `obs_t` from the environment is fed into the **Encoder** to produce an embedding `embed_t`.
+    2.  The **RSSM** then performs an `obs_step(prev_state_{t-1}, prev_action_{t-1}, embed_t)`:
+        *   **Prior Prediction**: Using `prev_state_{t-1}` (which contains `stoch_{t-1}` and `deter_{t-1}`) and `prev_action_{t-1}`, the RSSM first predicts a *prior* stochastic state, `prior_stoch_t`, and updates `deter_{t-1}` to `deter_t` via its GRU cell. This is done *before* considering `embed_t`. (Path: `prev_stoch` + `prev_action` -> `_img_in_layers` -> GRU (`_cell`) updates `deter` -> `_img_out_layers` -> `_imgs_stat_layer` -> `prior_stoch_stats_t`).
+        *   **Posterior Update**: The `deter_t` and the current `embed_t` are then used to compute a *posterior* stochastic state, `post_stoch_t`. (Path: `deter_t` + `embed_t` -> `_obs_out_layers` -> `_obs_stat_layer` -> `post_stoch_stats_t`).
+        *   The output `post_state_t` contains `post_stoch_t`, `deter_t`, and their respective statistics.
+    3.  The combined feature `feat_t = RSSM.get_feat(post_state_t)` (concatenation of `post_stoch_t` and `deter_t`) is passed to the **Prediction Heads**.
+    4.  The Decoder Head tries to reconstruct `obs_t` from `feat_t`. The Reward Head predicts `reward_t`. The Continue Head predicts `cont_t`.
+
+    **C. World Model Training Process:**
+
+    The World Model is trained to optimize several objectives simultaneously using a combined loss function. This happens in the `WorldModel._train` method:
+
+    1.  **Input Data**: A batch of sequences `(obs_t, action_{t-1}, reward_t, is_first_t)` collected from the environment.
+    2.  **Loss Components**:
+        *   **Reconstruction/Prediction Losses**:
+            *   For each head (Decoder, Reward, Continue), the predicted distribution is compared against the actual target data from the input sequence (e.g., predicted image vs. actual image, predicted reward vs. actual reward).
+            *   The loss is typically the negative log-likelihood of the true data under the predicted distribution (e.g., `-decoder_dist.log_prob(actual_obs)`).
+            *   These losses encourage the heads to make accurate predictions from the RSSM's features.
+        *   **KL Divergence Loss (`RSSM.kl_loss`)**: This is crucial for regularizing the latent space of the RSSM. It consists of two parts:
+            *   **Dynamics Loss (`dyn_loss`)**: `KL(dist(sg(post_state)) || dist(prior_state))`. This penalizes the prior distribution if it significantly deviates from the posterior distribution (when the posterior is treated as a non-gradient-propagating target via `sg` - stop_gradient). It trains the RSSM's transition dynamics (how `deter` evolves via GRU and how `prior_stoch` is predicted).
+            *   **Representation Loss (`rep_loss`)**: `KL(dist(post_state) || dist(sg(prior_state)))`. This penalizes the posterior distribution if it significantly deviates from the prior distribution (when the prior is treated as a non-gradient-propagating target). It trains how the RSSM infers the posterior stochastic state from new observations (via `_obs_out_layers` and `_obs_stat_layer`).
+            *   A "free nats" mechanism (e.g., `kl_free` config) is often applied, meaning small KL divergences below a threshold don't contribute to the loss, preventing the KL term from overly dominating.
+            *   These two KL components are scaled by `dyn_scale` and `rep_scale` respectively.
+    3.  **Total Model Loss**: The sum of all scaled prediction losses (from Decoder, Reward, Continue heads) and the scaled KL divergence loss (`kl_loss = dyn_scale * dyn_loss + rep_scale * rep_loss`).
+    4.  **Gradient Descent**:
+        *   A single optimizer (`_model_opt` in `WorldModel`) is used for all parameters of the World Model (Encoder, RSSM, and all Prediction Heads).
+        *   Gradients from the total model loss flow back:
+            *   Prediction losses train their respective heads.
+            *   If a head is listed in `config.grad_heads`, its loss also contributes gradients back to the RSSM features (`get_feat`), thereby influencing the training of the RSSM state components (`stoch` and `deter`). If not in `grad_heads`, the features fed to that head are detached (`feat.detach()`), so the loss only trains the head itself.
+            *   The KL divergence loss directly trains the components of the RSSM responsible for generating the prior and posterior distributions.
+            *   The Encoder is trained via gradients flowing back from the RSSM's use of the `embed` (primarily through the posterior pathway and representation loss) and potentially through direct reconstruction losses if configured.
+
+    This comprehensive training process allows the World Model to learn to encode observations, predict future states and rewards, and maintain a consistent internal representation of the environment.
+
 2.  **The Imagined Behavior (Actor-Critic)**:
     *   **Purpose**: To learn the optimal way to act to maximize cumulative rewards.
     *   **Functionality**: This component learns almost entirely from trajectories imagined by the world model.

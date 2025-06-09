@@ -16,6 +16,67 @@ DreamerV3 智能体主要由三个相互关联的部分组成：
             *   **奖励 (Rewards)**：预测智能体在该状态下将获得的即时奖励。
     *   **益处**：通过学习预测这些结果，世界模型使智能体能够生成假设的轨迹（“梦想”），而无需不断与真实（通常较慢）的环境互动。
 
+    #### 世界模型的详细架构与训练
+
+    世界模型本身是一个复杂的神经网络集合。以下是更深入的解析：
+
+    **A. 子组件：**
+
+    1.  **编码器 (`networks.MultiEncoder`)**：
+        *   **角色**：处理来自环境的原始观测（例如图像、向量数据），并将其压缩成称为“嵌入 (embedding)”的紧凑数值表示。
+        *   **结构**：它可以包含用于图像数据的卷积神经网络（CNN，在 `networks.ConvEncoder` 中实现）和用于向量数据的多层感知器（MLP，在 `networks.MLP` 中实现）。它处理并将这些不同类型的输入组合成单个嵌入向量。
+
+    2.  **RSSM (循环状态空间模型 - `networks.RSSM`)**：这是世界模型的核心预测引擎。它随时间维护和更新对环境状态的信念。该状态包括两部分：
+        *   **确定性状态 (`deter`)**：门控循环单元（GRU，在 `networks.GRUCell` 中实现）的隐藏状态。这部分捕获时间信息，并根据先前的确定性状态以及先前的随机状态和动作进行确定性演化。
+        *   **随机状态 (`stoch`)**：一个潜变量（可以是具有正态分布的连续变量或具有分类分布的离散变量）。这部分捕获了环境中无法完美预测的不确定性和可变性。
+        *   **关键内部层/操作**：
+            *   `_img_in_layers` (MLP)：处理先前的随机状态和动作，为 GRU 单元准备用于状态转换的输入。
+            *   `_cell` (GRU)：更新确定性状态的循环核心。
+            *   `_img_out_layers` (MLP)：处理来自 GRU 输出的新确定性状态，以帮助形成*先验*随机状态预测。
+            *   `_obs_out_layers` (MLP)：处理新的确定性状态和当前观测的嵌入，以帮助形成*后验*随机状态。
+            *   `_imgs_stat_layer` 和 `_obs_stat_layer` (线性层)：分别为先验和后验随机状态分布输出参数（均值/标准差或 logits）。
+
+    3.  **预测头 (`WorldModel` 中的 `self.heads`，使用 `networks.MultiDecoder` 和 `networks.MLP`)**：这些神经网络从 RSSM 的状态中获取特征，并对环境的各个方面进行预测：
+        *   **解码器 (`networks.MultiDecoder`)**：从 RSSM 状态特征重建原始观测（例如图像）。如果是图像，则使用 `networks.ConvDecoder`（转置卷积）。对于向量数据，则使用 MLP。
+        *   **奖励头 (`networks.MLP`)**：从 RSSM 状态特征预测即时奖励。
+        *   **持续头 (`networks.MLP`)**：同样从 RSSM 状态特征预测“持续”标志（如果回合正在进行则为1，如果终止则为0）或折扣因子。这有助于智能体学习回合终止。
+
+    **B. 互连和数据流（训练和推断期间）：**
+
+    1.  来自环境的观测 `obs_t` 被送入**编码器**以产生嵌入 `embed_t`。
+    2.  然后，**RSSM** 执行 `obs_step(prev_state_{t-1}, prev_action_{t-1}, embed_t)`：
+        *   **先验预测**：使用 `prev_state_{t-1}`（包含 `stoch_{t-1}` 和 `deter_{t-1}`）和 `prev_action_{t-1}`，RSSM 首先预测一个*先验*随机状态 `prior_stoch_t`，并通过其 GRU 单元将 `deter_{t-1}` 更新为 `deter_t`。这是在考虑 `embed_t` *之前*完成的。（路径：`prev_stoch` + `prev_action` -> `_img_in_layers` -> GRU (`_cell`) 更新 `deter` -> `_img_out_layers` -> `_imgs_stat_layer` -> `prior_stoch_stats_t`）。
+        *   **后验更新**：然后使用 `deter_t` 和当前 `embed_t` 计算*后验*随机状态 `post_stoch_t`。（路径：`deter_t` + `embed_t` -> `_obs_out_layers` -> `_obs_stat_layer` -> `post_stoch_stats_t`）。
+        *   输出 `post_state_t` 包含 `post_stoch_t`、`deter_t` 及其各自的统计数据。
+    3.  组合特征 `feat_t = RSSM.get_feat(post_state_t)`（`post_stoch_t` 和 `deter_t` 的串联）被传递给**预测头**。
+    4.  解码器头尝试从 `feat_t` 重建 `obs_t`。奖励头预测 `reward_t`。持续头预测 `cont_t`。
+
+    **C. 世界模型训练过程：**
+
+    世界模型通过组合损失函数同时优化多个目标进行训练。这发生在 `WorldModel._train` 方法中：
+
+    1.  **输入数据**：从环境收集的一批序列 `(obs_t, action_{t-1}, reward_t, is_first_t)`。
+    2.  **损失组件**：
+        *   **重建/预测损失**：
+            *   对于每个头（解码器、奖励、持续），将预测的分布与输入序列中的实际目标数据进行比较（例如，预测图像与实际图像，预测奖励与实际奖励）。
+            *   损失通常是真实数据在预测分布下的负对数似然（例如，`-decoder_dist.log_prob(actual_obs)`）。
+            *   这些损失鼓励预测头从 RSSM 的特征中做出准确的预测。
+        *   **KL 散度损失 (`RSSM.kl_loss`)**：这对于正则化 RSSM 的潜空间至关重要。它包括两部分：
+            *   **动态损失 (`dyn_loss`)**：`KL(dist(sg(post_state)) || dist(prior_state))`。如果先验分布显著偏离后验分布（当后验分布通过 `sg` - stop_gradient - 被视为非梯度传播目标时），则该损失会惩罚先验分布。它训练 RSSM 的转换动态（`deter` 如何通过 GRU 演化以及如何预测 `prior_stoch`）。
+            *   **表示损失 (`rep_loss`)**：`KL(dist(post_state) || dist(sg(prior_state)))`。如果后验分布显著偏离先验分布（当先验分布被视为非梯度传播目标时），则该损失会惩罚后验分布。它训练 RSSM 如何从新的观测中推断后验随机状态（通过 `_obs_out_layers` 和 `_obs_stat_layer`）。
+            *   通常应用“自由位数 (free nats)”机制（例如 `kl_free` 配置），这意味着低于阈值的小 KL 散度不会对损失产生贡献，从而防止 KL 项过度主导。
+            *   这两个 KL 组件分别按 `dyn_scale` 和 `rep_scale`进行缩放。
+    3.  **总模型损失**：所有缩放后的预测损失（来自解码器、奖励、持续头）和缩放后的 KL 散度损失 (`kl_loss = dyn_scale * dyn_loss + rep_scale * rep_loss`) 的总和。
+    4.  **梯度下降**：
+        *   单个优化器 (`WorldModel` 中的 `_model_opt`) 用于世界模型的所有参数（编码器、RSSM 和所有预测头）。
+        *   总模型损失的梯度反向传播：
+            *   预测损失训练其各自的头。
+            *   如果一个头在 `config.grad_heads` 中列出，其损失也会将梯度反向传播到 RSSM 特征 (`get_feat`)，从而影响 RSSM 状态组件（`stoch` 和 `deter`）的训练。如果不在 `grad_heads` 中，则馈送到该头的特征将被分离 (`feat.detach()`)，因此损失仅训练该头本身。
+            *   KL 散度损失直接训练负责生成先验和后验分布的 RSSM 组件。
+            *   编码器通过从 RSSM 使用 `embed`（主要通过后验路径和表示损失）以及（如果配置）可能通过直接重建损失反向传播的梯度进行训练。
+
+    这种全面的训练过程使世界模型能够学习编码观测、预测未来状态和奖励，并保持环境的一致内部表示。
+
 2.  **想象行为 (Imagined Behavior / Actor-Critic)**：
     *   **目的**：学习最大化累积奖励的最优行动方式。
     *   **功能**：该组件几乎完全从世界模型想象的轨迹中学习。
