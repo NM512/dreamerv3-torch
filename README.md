@@ -1,4 +1,12 @@
 # dreamerv3-torch
+
+> [!IMPORTANT]
+> **Notice: Outdated Implementation**
+> 
+> This codebase was implemented prior to major updates to DreamerV3 and does not reflect those changes, which accounts for several GitHub Issues in this repository.
+> 
+> An up-to-date and **~5x faster** PyTorch DreamerV3 reproduction is now maintained as part of our new repository: **[r2dreamer](https://github.com/NM512/r2dreamer)**. Please refer to that repository for the latest DreamerV3 baseline, provided alongside a PyTorch implementation of R2-Dreamer (ICLR 2026).
+
 Pytorch implementation of [Mastering Diverse Domains through World Models](https://arxiv.org/abs/2301.04104v1). DreamerV3 is a scalable algorithm that outperforms previous approaches across various domains with fixed hyperparameters.
 
 ## Instructions
@@ -44,6 +52,11 @@ So far, the following benchmarks can be used for testing.
 
 #### Crafter
 <img src="https://github.com/NM512/dreamerv3-torch/assets/70328564/a0626038-53f6-4300-a622-7ac257f4c290" width="300" height="150" />
+
+### Troubleshooting
+
+**`AttributeError: 'NoneType' object has no attribute 'glGetError'`**
+If you encounter this OpenGL-related error when running DMCtasks, it is typically caused by a headless rendering environment setup. Please refer to [this discussion/issue](https://github.com/NM512/dreamerv3-torch/issues/65) for the solution.
 
 ## Acknowledgments
 This code is heavily inspired by the following works:
