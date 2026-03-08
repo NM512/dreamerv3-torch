@@ -409,6 +409,8 @@ class ImagBehavior(nn.Module):
             metrics.update(tools.tensorstats(normed_target, "normed_target"))
             metrics["EMA_005"] = to_np(self.ema_vals[0])
             metrics["EMA_095"] = to_np(self.ema_vals[1])
+        else:
+            adv = target - base
 
         if self._config.imag_gradient == "dynamics":
             actor_target = adv
